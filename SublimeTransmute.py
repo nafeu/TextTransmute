@@ -66,9 +66,6 @@ class MutationEngine:
     def clip(self):
         return sublime.get_clipboard()
 
-    def length(self):
-        return len(self.body)
-
     def repeat(self):
         return self.body + self.body
 
@@ -76,6 +73,14 @@ class MutationEngine:
         return self.body[::-1]
 
     def count(self):
+        # Mutation Case Algorithms
+        def default():
+            return len(self.body)
+
+        def word_count():
+            return len(self.body.split())
+
+        # Option Parsing
         try:
             opts, args = getopt.getopt(self.params, 'w')
         except getopt.GetoptError as err:
@@ -83,14 +88,16 @@ class MutationEngine:
             sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
             return self.body
 
+        # Mutation Execution
         for o, a in opts:
             if o == "-w":
-                return len(self.body.split())
+                return word_count()
             else:
-                return len(self.body)
+                return default()
 
-        # no opt default
-        return len(self.body)
+        # default
+        return default()
+
 
 class TransmuteCommand(sublime_plugin.TextCommand):
 
