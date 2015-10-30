@@ -55,7 +55,6 @@ class MutationEngine:
             raise InvalidTransmutation(command)
 
     # Mutation Methods --- ADD NEW METHODS HERE
-
     def clip(self):
         return sublime.get_clipboard()
 
@@ -64,7 +63,6 @@ class MutationEngine:
 
     def repeat(self):
         return self.body + self.body
-
 
     def reverse(self):
         return self.body[::-1]
