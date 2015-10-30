@@ -1,5 +1,6 @@
 import sublime
 import sublime_plugin
+import getopt
 
 class ExampleCommand(sublime_plugin.TextCommand):
 
@@ -7,14 +8,13 @@ class ExampleCommand(sublime_plugin.TextCommand):
         def on_done(text):
             self.view.run_command("parse", {"user_input": text})
 
-        sublime.active_window().show_input_panel("Transmute Code", "length", on_done, None, None)
+        sublime.active_window().show_input_panel("Transmute Code", "count", on_done, None, None)
 
 class ParseCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, user_input):
         error_status = False
         region_set = self.view.sel()
-        # command_list = user_input.split("|")
         command_list = [x.strip() for x in user_input.split('|')]
         m = MutationEngine()
         for region in region_set:
@@ -37,7 +37,7 @@ class MutationEngine:
     def __init__(self):
         self.body = ""
         self.command_name = ""
-        self.args = ""
+        self.params = ""
         # list all the methods that are not default object methods
         self.command_lib = [
             method for method in dir(MutationEngine)
@@ -48,13 +48,21 @@ class MutationEngine:
 
     def mutate(self, body, command):
         self.body = body
-        # also later consider splitting up the arguments here
-        if command in self.command_lib:
-            return str(eval("self."+command)())
+        # split incoming input into a list by delimiter whitespace
+        input_split = command.split()
+        # the first item in the list is your command name
+        self.command_name = input_split[0]
+        # the rest of the string is params
+        if len(input_split) > 1:
+            self.params = input_split[1:]
+
+        if self.command_name in self.command_lib:
+            return str(eval("self."+self.command_name)())
         else:
             raise InvalidTransmutation(command)
 
     # Mutation Methods --- ADD NEW METHODS HERE
+
     def clip(self):
         return sublime.get_clipboard()
 
@@ -67,6 +75,22 @@ class MutationEngine:
     def reverse(self):
         return self.body[::-1]
 
+    def count(self):
+        try:
+            opts, args = getopt.getopt(self.params, 'w')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            return self.body
+
+        for o, a in opts:
+            if o == "-w":
+                return len(self.body.split())
+            else:
+                return len(self.body)
+
+        # no opt default
+        return len(self.body)
 
 class TransmuteCommand(sublime_plugin.TextCommand):
 
