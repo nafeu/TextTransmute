@@ -1,6 +1,12 @@
 import sublime
 import sublime_plugin
 import getopt
+import re
+
+# Globals
+whitespace_pattern = re.compile(r'''((?:[^\s"']|"[^"]*"|'[^']*')+)''')
+pipe_pattern = re.compile(r'''((?:[^|"']|"[^"]*"|'[^']*')+)''')
+
 
 class ExampleCommand(sublime_plugin.TextCommand):
 
@@ -15,7 +21,7 @@ class ParseCommand(sublime_plugin.TextCommand):
     def run(self, edit, user_input):
         error_status = False
         region_set = self.view.sel()
-        command_list = [x.strip() for x in user_input.split('|')]
+        command_list = [x.strip() for x in pipe_pattern.split(user_input)[1::2]]
         m = MutationEngine()
         for region in region_set:
             # grab the content of the region
@@ -47,13 +53,20 @@ class MutationEngine:
         ]
 
     def mutate(self, body, command):
+
+        def strip_quotes(input_string):
+            if (input_string[0] == input_string[len(input_string)-1]) and (input_string[0] in ('"',"'")):
+                return input_string[1:-1]
+            else:
+                return input_string
+
         self.body = body
         # split incoming input into a list by delimiter whitespace
-        input_split = command.split()
+        input_split = [strip_quotes(x) for x in whitespace_pattern.split(command)[1::2]]
         # the first item in the list is your command name
         self.command_name = input_split[0]
         # the rest of the string is params
-        if len(input_split) > 1:
+        if input_split:
             self.params = input_split[1:]
 
         if self.command_name in self.command_lib:
