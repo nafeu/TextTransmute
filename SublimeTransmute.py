@@ -8,7 +8,7 @@ class ExampleCommand(sublime_plugin.TextCommand):
         def on_done(text):
             self.view.run_command("parse", {"user_input": text})
 
-        sublime.active_window().show_input_panel("Transmute Code", "count", on_done, None, None)
+        sublime.active_window().show_input_panel("Transmute Code", "dupl", on_done, None, None)
 
 class ParseCommand(sublime_plugin.TextCommand):
 
@@ -66,13 +66,11 @@ class MutationEngine:
     def clip(self):
         return sublime.get_clipboard()
 
-    def repeat(self):
-        return self.body + self.body
-
     def reverse(self):
         return self.body[::-1]
 
     def count(self):
+
         # Mutation Case Algorithms
         def default():
             return len(self.body)
@@ -80,20 +78,85 @@ class MutationEngine:
         def word_count():
             return len(self.body.split())
 
+        def line_count():
+            return self.body.count('\n')+1
+
+        def string_count(input):
+            return self.body.count(input)
+
         # Option Parsing
         try:
-            opts, args = getopt.getopt(self.params, 'w')
+            opts, args = getopt.getopt(self.params, 'lws:')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
             sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
             return self.body
 
-        # Mutation Execution
+        # Option Handling
         for o, a in opts:
-            if o == "-w":
+            if o == "-l":
+                return line_count()
+            elif o == "-w":
                 return word_count()
+            elif o == "-s":
+                return string_count(a)
             else:
                 return default()
+
+        # default
+        return default()
+
+    def dupl(self):
+
+        # Option status
+        newline = ''
+        multiplier = 2
+
+        # Mutation Case Algorithms
+        def default():
+            return ((self.body + newline) * int(multiplier))
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(self.params, 'l')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            return self.body
+
+        # Option Handling
+        for o, a in opts:
+            if o == "-l":
+                newline = '\n'
+
+        # Arg Handling
+        if args:
+            multiplier = args[0]
+
+        # default
+        return default()
+
+    def template(self):
+
+        # Mutation Case Algorithms
+        def default():
+            return len(self.body)
+
+        def other_cases():
+            return len(self.body.split())
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(self.params, 'lws:')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            return self.body
+
+        # Option Handling
+        for o, a in opts:
+            if o == "-l":
+                return other_cases()
 
         # default
         return default()
