@@ -7,10 +7,17 @@ import __future__
 class ExampleCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
+        # print(sublime.active_window().project_data())
         def on_done(text):
             self.view.run_command("parse", {"user_input": text})
 
-        sublime.active_window().show_input_panel("Transmute Code", "gen 1 10", on_done, None, None)
+        project_data = sublime.active_window().project_data()
+        if 'history' in project_data.keys():
+            input_field = project_data['history']
+        else:
+            input_field = ""
+        sublime.active_window().show_input_panel("Transmute Code", input_field, on_done, None, None)
+
 
 class ParseCommand(sublime_plugin.TextCommand):
 
@@ -41,6 +48,10 @@ class ParseCommand(sublime_plugin.TextCommand):
                     break
             # call the transmutation to replace it on your screen
             if not error_status:
+                project_data = sublime.active_window().project_data()
+                project_data['history'] = user_input
+                sublime.active_window().set_project_data(project_data)
+                # sublime.active_window().set_project_data()
                 self.view.run_command("transmute", {"region_begin" : region.begin(), "region_end" : region.end(), "string" : body})
 
 class MutationEngine:
@@ -94,9 +105,6 @@ class MutationEngine:
 
     def reverse(self):
         return self.body[::-1]
-
-    # def gen(self):
-    #     return "\n".join(str(i) for i in range(1,10,2))
 
     def gen(self):
 
@@ -187,7 +195,7 @@ class MutationEngine:
     def dupl(self):
 
         # Option status
-        newline = ''
+        newline = '\n'
         multiplier = 2
 
         # Mutation Case Algorithms
@@ -204,8 +212,8 @@ class MutationEngine:
 
         # Option Handling
         for o, a in opts:
-            if o == "-l":
-                newline = '\n'
+            if o == "-s":
+                newline = ''
 
         # Arg Handling
         if args:
