@@ -10,7 +10,7 @@ class ExampleCommand(sublime_plugin.TextCommand):
         def on_done(text):
             self.view.run_command("parse", {"user_input": text})
 
-        sublime.active_window().show_input_panel("Transmute Code", "count -s `2+3`", on_done, None, None)
+        sublime.active_window().show_input_panel("Transmute Code", "gen 1 10", on_done, None, None)
 
 class ParseCommand(sublime_plugin.TextCommand):
 
@@ -94,6 +94,58 @@ class MutationEngine:
 
     def reverse(self):
         return self.body[::-1]
+
+    # def gen(self):
+    #     return "\n".join(str(i) for i in range(1,10,2))
+
+    def gen(self):
+
+        # Option status
+        prefix = ''
+        suffix = ''
+        range_start = 0
+        range_end = 0
+        range_increment = 1
+        seperator = '\n'
+
+        # Mutation Case Algorithms
+        def default():
+            return seperator.join((prefix+str(i)+suffix) for i in range(range_start,range_end,range_increment))
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(self.params, 'b:a:s')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            return self.body
+
+        # Option Handling
+        for o, a in opts:
+            if o == "-s":
+                seperator = ''
+            elif o == "-b":
+                prefix = a
+            elif o == "-a":
+                suffix = a
+
+        # Arg Handling
+        if len(args) >= 2:
+            range_start = int(args[0])
+            range_end = int(args[1]) + 1
+            try:
+                range_increment = int(args[2])
+            except IndexError:
+                pass
+            if range_start > range_end:
+                range_increment *= -1
+                range_end -= 2
+        else:
+            raise InvalidTransmutation("'gen' command needs arguments")
+
+
+        # default
+        return default()
 
     def count(self):
 
