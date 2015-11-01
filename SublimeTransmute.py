@@ -2,11 +2,7 @@ import sublime
 import sublime_plugin
 import getopt
 import re
-
-# Globals
-whitespace_pattern = re.compile(r'''((?:[^\s"']|"[^"]*"|'[^']*')+)''')
-pipe_pattern = re.compile(r'''((?:[^|"']|"[^"]*"|'[^']*')+)''')
-
+import __future__
 
 class ExampleCommand(sublime_plugin.TextCommand):
 
@@ -14,13 +10,14 @@ class ExampleCommand(sublime_plugin.TextCommand):
         def on_done(text):
             self.view.run_command("parse", {"user_input": text})
 
-        sublime.active_window().show_input_panel("Transmute Code", "dupl", on_done, None, None)
+        sublime.active_window().show_input_panel("Transmute Code", "count -s `2+3`", on_done, None, None)
 
 class ParseCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, user_input):
         error_status = False
         region_set = self.view.sel()
+        pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
         command_list = [x.strip() for x in pipe_pattern.split(user_input)[1::2]]
         m = MutationEngine()
         for region in region_set:
@@ -32,6 +29,14 @@ class ParseCommand(sublime_plugin.TextCommand):
                     body = m.mutate(body, command)
                 except InvalidTransmutation as e:
                     sublime.error_message("Invalid Transmutation Command: \n\n'" + e.value + "'")
+                    error_status = True
+                    break
+                except SyntaxError as e:
+                    sublime.error_message("Invalid Transmutation Syntax: \n\n'" + str(e) + "'")
+                    error_status = True
+                    break
+                except NameError as e:
+                    sublime.error_message("Invalid Transmutation Command: \n\n'" + str(e) + "'")
                     error_status = True
                     break
             # call the transmutation to replace it on your screen
@@ -57,12 +62,20 @@ class MutationEngine:
         def strip_quotes(input_string):
             if (input_string[0] == input_string[len(input_string)-1]) and (input_string[0] in ('"',"'")):
                 return input_string[1:-1]
-            else:
-                return input_string
+            return input_string
+
+        def eval_simple_expr(input_string):
+            if (input_string[0] == input_string[len(input_string)-1]) and (input_string[0] in ('`')):
+                return simple_expr(input_string[1:-1])
+            return input_string
+
+        def clean_param(param):
+            return str(eval_simple_expr(strip_quotes(param)))
 
         self.body = body
         # split incoming input into a list by delimiter whitespace
-        input_split = [strip_quotes(x) for x in whitespace_pattern.split(command)[1::2]]
+        whitespace_pattern = re.compile(r'''((?:[^\s"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
+        input_split = [clean_param(x) for x in whitespace_pattern.split(command)[1::2]]
         # the first item in the list is your command name
         self.command_name = input_split[0]
         # the rest of the string is params
@@ -180,11 +193,31 @@ class TransmuteCommand(sublime_plugin.TextCommand):
     def run(self, edit, region_begin, region_end, string):
         self.view.replace(edit, sublime.Region(region_begin, region_end), string)
 
+# Helpers
 class InvalidTransmutation(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
+
+def simple_expr(expression):
+    restrict_chars = (' ','+','-','/','*','^','%')
+    back_ops = tuple('(') + restrict_chars
+    fwd_ops = tuple(')') + restrict_chars
+    x, i = expression, 0
+    end_size = len(x)
+    while (i < len(x)-1):
+        if (i > 0):
+            if x[i] == '(' and x[i-1] not in back_ops and x[i+1] not in fwd_ops:
+                x = x[:i] + '*' + x[i:]
+            elif x[i] == ')' and x[i-1] not in back_ops and x[i+1] not in fwd_ops:
+                x = x[:i+1] + '*' + x[i+1:]
+            elif x[i] == '^':
+                x = x[:i] + '**' + x[i+1:]
+            end_size += 1
+            i += 1
+        i += 1
+    return eval(compile(x, '<string>', 'eval', __future__.division.compiler_flag))
 
 '''
 
