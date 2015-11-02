@@ -8,25 +8,36 @@ from itertools import permutations
 class ExampleCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
-        # print(sublime.active_window().project_data())
+
         def on_done(text):
             self.view.run_command("parse", {"user_input": text})
 
+        # command history persistence
         project_data = sublime.active_window().project_data()
         if 'history' in project_data.keys():
             input_field = project_data['history']
         else:
             input_field = ""
-        sublime.active_window().show_input_panel("Transmute Code", input_field, on_done, None, None)
+
+        sublime.active_window().show_input_panel("Transmute Selection", input_field, on_done, None, None)
 
 
 class ParseCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, user_input):
+
+        extra = False
         error_status = False
         region_set = self.view.sel()
+
+        if user_input[0] == "+":
+            to_parse = user_input[1:]
+            extra = True
+        else:
+            to_parse = user_input
+
         pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
-        command_list = [x.strip() for x in pipe_pattern.split(user_input)[1::2]]
+        command_list = [x.strip() for x in pipe_pattern.split(to_parse)[1::2]]
         m = MutationEngine()
         for region in region_set:
             # grab the content of the region
@@ -47,6 +58,8 @@ class ParseCommand(sublime_plugin.TextCommand):
                     sublime.error_message("Invalid Transmutation Command: \n\n'" + str(e) + "'")
                     error_status = True
                     break
+            if extra:
+                body = self.view.substr(region)+'\n\n'+body
             # call the transmutation to replace it on your screen
             if not error_status:
                 project_data = sublime.active_window().project_data()
@@ -207,7 +220,7 @@ class MutationEngine:
                 seperator = ''
             elif o == "-s":
                 placement = a
-                if not placement.find('{$}'):
+                if placement.find('{$}') == -1:
                     placement = a + '{$}'
 
         # Arg Handling
@@ -363,6 +376,27 @@ def simple_expr(expression):
 3. Map to Command
 4. Process Transmutation
 5. Replace/Insert Text
+
+Command List:
+
+- gen
+    - generator, can create lines of incrementing lists
+- dupl
+    - simple duplicator of selected region
+- count
+    - count words, lines and characters in the selection
+-
+-
+-
+-
+-
+-
+-
+
+Feature Notes:
+
+To add:
+- if you put a plus sign before the initial transmutation it is additive
 
 '''
 
