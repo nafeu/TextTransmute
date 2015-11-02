@@ -3,6 +3,7 @@ import sublime_plugin
 import getopt
 import re
 import __future__
+from itertools import permutations
 
 class ExampleCommand(sublime_plugin.TextCommand):
 
@@ -103,14 +104,86 @@ class MutationEngine:
     def clip(self):
         return sublime.get_clipboard()
 
-    def reverse(self):
+    def rev(self):
         return self.body[::-1]
+
+    def perms(self):
+
+        # Mutation Case Algorithms
+        def default():
+            if len(self.body) > 6:
+                raise InvalidTransmutation("'perms' input too big for this dinky plugin")
+            else:
+                return '\n'.join(i for i in set([''.join(p) for p in permutations(self.body)]))
+
+        # Option Status
+        to_permute = ""
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(self.params, '')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            return self.body
+
+        # Option Handling
+        # for o, a in opts:
+        #     if o == "-l":
+        #         return other_cases()
+
+        # Arg Handling
+        # if args:
+        #     if len(args[0]) > 5:
+        #         raise InvalidTransmutation("'perms' input too big for this dinky plugin")
+        #     else:
+        #         to_permute = args[0]
+        # else:
+        #     raise InvalidTransmutation("'swap' command needs arguments")
+
+        # default
+        return default()
+
+    def swap(self):
+
+        # Mutation Case Algorithms
+        def default():
+            return self.body.replace(old_string, new_string)
+
+        def other_cases():
+            return len(self.body.split())
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(self.params, '')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            return self.body
+
+        # Option Handling
+        # for o, a in opts:
+        #     if o == "-l":
+        #         return other_cases()
+
+        # Arg Handling
+        if len(args) > 1:
+            old_string = args[0]
+            new_string = args[1]
+        else:
+            raise InvalidTransmutation("'swap' command needs arguments")
+
+        # default
+        return default()
 
     def gen(self):
 
+        # Helpers
+        def place(s, placement):
+            return str(placement.replace('{$}',str(s)))
+
         # Option status
-        prefix = ''
-        suffix = ''
+        placement = '{$}'
         range_start = 0
         range_end = 0
         range_increment = 1
@@ -118,11 +191,11 @@ class MutationEngine:
 
         # Mutation Case Algorithms
         def default():
-            return seperator.join((prefix+str(i)+suffix) for i in range(range_start,range_end,range_increment))
+            return seperator.join(place(i, placement) for i in range(range_start, range_end, range_increment))
 
         # Option Parsing
         try:
-            opts, args = getopt.getopt(self.params, 'b:a:s')
+            opts, args = getopt.getopt(self.params, 'cs:')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
             sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
@@ -130,12 +203,12 @@ class MutationEngine:
 
         # Option Handling
         for o, a in opts:
-            if o == "-s":
+            if o == "-c":
                 seperator = ''
-            elif o == "-b":
-                prefix = a
-            elif o == "-a":
-                suffix = a
+            elif o == "-s":
+                placement = a
+                if not placement.find('{$}'):
+                    placement = a + '{$}'
 
         # Arg Handling
         if len(args) >= 2:
@@ -243,6 +316,10 @@ class MutationEngine:
         for o, a in opts:
             if o == "-l":
                 return other_cases()
+
+        # Arg Handling
+        if args:
+            multiplier = args[0]
 
         # default
         return default()
