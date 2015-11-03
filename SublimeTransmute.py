@@ -120,6 +120,32 @@ class MutationEngine:
     def rev(self):
         return self.body[::-1]
 
+    def expr(self):
+
+        # Mutation Case Algorithms
+        def default():
+            return simple_expr(self.body)
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(self.params, '')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            return self.body
+
+        # Option Handling
+        # for o, a in opts:
+        #     if o == "-l":
+        #         return other_cases()
+
+        # Arg Handling
+        # if args:
+        #     multiplier = args[0]
+
+        # default
+        return default()
+
     def perms(self):
 
         # Mutation Case Algorithms
@@ -355,6 +381,7 @@ def simple_expr(expression):
     back_ops = tuple('(') + restrict_chars
     fwd_ops = tuple(')') + restrict_chars
     x, i = expression, 0
+    x = "("+x+")"
     end_size = len(x)
     while (i < len(x)-1):
         if (i > 0):
@@ -367,6 +394,7 @@ def simple_expr(expression):
             end_size += 1
             i += 1
         i += 1
+    print(x)
     return eval(compile(x, '<string>', 'eval', __future__.division.compiler_flag))
 
 '''
@@ -385,18 +413,61 @@ Command List:
     - simple duplicator of selected region
 - count
     - count words, lines and characters in the selection
+- swap
+    - similar to a find and replace
+- clip
+    - body becomes your clipboard
+- format
+    - calls sublime reindentation command
+*- math
+    - evaluate expressions
+    - 10% of 5
+*- conv
+    - convert measurements
+*- elric
+    - smart / checks for keywords in your phrase and tries to apply a command on it
+*- word
+    - "-r" gives you the rhyme
+    - "-s" gives you synonym
+    - "-a" gives you the antonym
+*- l33t
+    - converts all text to l33t speak
+*- time
+    - gives you contextual time manipulation
+    - for instance: todays date
+*- spell
+    - use pyenchant to check spelling
 -
--
--
--
--
--
--
+
 
 Feature Notes:
 
-To add:
-- if you put a plus sign before the initial transmutation it is additive
+Required:
+
+Will have to make a generalized keyword mapper that parses for keywords, essentially working like a circuit,
+returning bit strings as output and have those bit strings as inputs into a dict
+
+It needs to have advanced features like if a keyword appears before another one
+
+KeywordParse(userinput, KeywordCond) -> return ""
+
+KeywordCond()
+
+Example Use Case:
+
+what time is it?
+
+what is the time?
+
+todays date plus tomorrows date
+
+today's date plus tomorrows date
+
+the time
+
+current time
+
+
 
 '''
 
