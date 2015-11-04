@@ -227,9 +227,12 @@ class MutationEngine:
         range_end = 0
         range_increment = 1
         seperator = '\n'
+        alphabet = False
 
         # Mutation Case Algorithms
         def default():
+            if alphabet:
+                return seperator.join(place(chr(i), placement) for i in range(range_start, range_end, range_increment))
             return seperator.join(place(i, placement) for i in range(range_start, range_end, range_increment))
 
         # Option Parsing
@@ -251,8 +254,13 @@ class MutationEngine:
 
         # Arg Handling
         if len(args) >= 2:
-            range_start = int(args[0])
-            range_end = int(args[1]) + 1
+            try:
+                range_start = int(args[0])
+                range_end = int(args[1]) + 1
+            except ValueError:
+                range_start = ord(args[0])
+                range_end = ord(args[1]) + 1
+                alphabet = True
             try:
                 range_increment = int(args[2])
             except IndexError:
@@ -419,6 +427,7 @@ Command List:
     - body becomes your clipboard
 - format
     - calls sublime reindentation command
+    - "-c" custom formatting, listify
 *- math
     - evaluate expressions
     - 10% of 5
@@ -437,7 +446,6 @@ Command List:
     - for instance: todays date
 *- spell
     - use pyenchant to check spelling
--
 
 
 Feature Notes:
