@@ -1,4 +1,5 @@
 import unittest
+from ..components.meng import *
 
 class TestCountCommand(unittest.TestCase):
 
@@ -12,3 +13,9 @@ class TestCountCommand(unittest.TestCase):
         orig = 'a'
         compare = int(self.m.mutate(orig,'count'))
         self.assertEqual(compare, 1)
+
+def runTests():
+    unittest.main()
+
+if __name__ == '__main__':
+    runTests()

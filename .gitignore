@@ -3,3 +3,6 @@
 
 devnotes.txt
 parsetest.py
+components/*.pyc
+tests/*.pyc
+*.pyc

@@ -24,7 +24,6 @@ class MutationEngine:
             self.error_module = error_logger
 
     def mutate(self, body, command):
-
         # Helpers
 
         def strip_quotes(input_string):
