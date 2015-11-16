@@ -1,8 +1,8 @@
-import sublime
 import getopt
 import re
 from itertools import permutations
-from .helpers import *
+import helpers
+import unittest
 
 class MutationEngine:
 

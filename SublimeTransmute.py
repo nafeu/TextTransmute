@@ -1,6 +1,6 @@
 import sublime
 import sublime_plugin
-from .meng import *
+from .components.meng import *
 
 class ExampleCommand(sublime_plugin.TextCommand):
 
