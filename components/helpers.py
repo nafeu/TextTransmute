@@ -21,6 +21,13 @@ def simple_expr(expression):
         i += 1
     return eval(compile(x, '<string>', 'eval', __future__.division.compiler_flag))
 
+# Classes
+class ConsoleErrorLogger:
+
+    def displayError(self, message):
+        print(message)
+
+# Exception Classes
 class InvalidTransmutation(Exception):
     def __init__(self, value):
         self.value = value

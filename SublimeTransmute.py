@@ -38,7 +38,8 @@ class ParseCommand(sublime_plugin.TextCommand):
 
         pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
         command_list = [x.strip() for x in pipe_pattern.split(to_parse)[1::2]]
-        m = MutationEngine()
+        error_logger = WindowErrorLogger()
+        m = MutationEngine(error_logger)
         for region in region_set:
             # grab the content of the region
             body = self.view.substr(region)
@@ -47,15 +48,15 @@ class ParseCommand(sublime_plugin.TextCommand):
                 try:
                     body = m.mutate(body, command)
                 except InvalidTransmutation as e:
-                    sublime.error_message("Invalid Transmutation Command: \n\n'" + e.value + "'")
+                    m.error_module.displayError("Invalid Transmutation Command: \n\n'" + e.value + "'")
                     error_status = True
                     break
                 except SyntaxError as e:
-                    sublime.error_message("Invalid Transmutation Syntax: \n\n'" + str(e) + "'")
+                    m.error_module.displayError("Invalid Transmutation Syntax: \n\n'" + str(e) + "'")
                     error_status = True
                     break
                 except NameError as e:
-                    sublime.error_message("Invalid Transmutation Command: \n\n'" + str(e) + "'")
+                    m.error_module.displayError("Invalid Transmutation Command: \n\n'" + str(e) + "'")
                     error_status = True
                     break
             if extra:
@@ -74,3 +75,9 @@ class TransmuteCommand(sublime_plugin.TextCommand):
     def run(self, edit, region_begin, region_end, string):
         self.view.replace(edit, sublime.Region(region_begin, region_end), string)
 
+# Plugin Specific Helper Classes
+
+class WindowErrorLogger:
+
+    def displayError(self, message):
+        sublime.error_message(message)

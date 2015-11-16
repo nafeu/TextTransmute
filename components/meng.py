@@ -1,12 +1,12 @@
 import getopt
 import re
 from itertools import permutations
-import helpers
+from .helpers import *
 import unittest
 
 class MutationEngine:
 
-    def __init__(self):
+    def __init__(self, error_module=None):
         self.body = ""
         self.command_name = ""
         self.params = ""
@@ -17,6 +17,11 @@ class MutationEngine:
                 and ("__" not in method)
                 and ("mutate" not in method)
         ]
+        if error_module:
+            self.error_module = error_module
+        else:
+            error_logger = ConsoleErrorLogger()
+            self.error_module = error_logger
 
     def mutate(self, body, command):
 
@@ -69,7 +74,7 @@ class MutationEngine:
             opts, args = getopt.getopt(self.params, '')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
-            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            self.error_module.displayError("For command: '" + self.command_name + "'\n\n" + str(err))
             return self.body
 
         # Option Handling
@@ -101,7 +106,7 @@ class MutationEngine:
             opts, args = getopt.getopt(self.params, '')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
-            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            self.error_module.displayError("For command: '" + self.command_name + "'\n\n" + str(err))
             return self.body
 
         # Option Handling
@@ -135,7 +140,7 @@ class MutationEngine:
             opts, args = getopt.getopt(self.params, '')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
-            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            self.error_module.displayError("For command: '" + self.command_name + "'\n\n" + str(err))
             return self.body
 
         # Option Handling
@@ -178,7 +183,7 @@ class MutationEngine:
             opts, args = getopt.getopt(self.params, 'cs:')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
-            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            self.error_module.displayError("For command: '" + self.command_name + "'\n\n" + str(err))
             return self.body
 
         # Option Handling
@@ -232,7 +237,7 @@ class MutationEngine:
             opts, args = getopt.getopt(self.params, 'lws:')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
-            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            self.error_module.displayError("For command: '" + self.command_name + "'\n\n" + str(err))
             return self.body
 
         # Option Handling
@@ -264,7 +269,7 @@ class MutationEngine:
             opts, args = getopt.getopt(self.params, 'l')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
-            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            self.error_module.displayError("For command: '" + self.command_name + "'\n\n" + str(err))
             return self.body
 
         # Option Handling
@@ -296,7 +301,7 @@ class MutationEngine:
             opts, args = getopt.getopt(self.params, 'lws:')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
-            sublime.error_message("For command: '" + self.command_name + "'\n\n" + str(err))
+            self.error_module.displayError("For command: '" + self.command_name + "'\n\n" + str(err))
             return self.body
 
         # Option Handling
