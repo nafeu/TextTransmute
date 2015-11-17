@@ -6,3 +6,4 @@ parsetest.py
 components/*.pyc
 tests/*.pyc
 *.pyc
+sandbox.py

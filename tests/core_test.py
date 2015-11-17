@@ -14,8 +14,5 @@ class TestCountCommand(unittest.TestCase):
         compare = int(self.m.mutate(orig,'count'))
         self.assertEqual(compare, 1)
 
-def runTests():
-    unittest.main()
-
 if __name__ == '__main__':
-    runTests()
+    unittest.main()
