@@ -1,7 +1,7 @@
 import unittest
 from ..components.meng import *
 
-class TestCountCommand(unittest.TestCase):
+class TestMengCore(unittest.TestCase):
 
     def setUp(self):
         self.m = MutationEngine()

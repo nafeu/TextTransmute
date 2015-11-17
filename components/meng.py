@@ -57,7 +57,13 @@ class MutationEngine:
     # Mutation Methods --- ADD NEW METHODS HERE
 
     def clip(self):
-        return sublime.get_clipboard()
+        return 'CLIPBOARD GOES HERE'
+        # root = Tkinter.Tk()
+        # keep the window from showing
+        # root.withdraw()
+        # read the clipboard
+        # return root.clipboard_get()
+        # return sublime.get_clipboard()
 
     def rev(self):
         return self.body[::-1]

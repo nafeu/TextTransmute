@@ -48,6 +48,7 @@ class ParseCommand(sublime_plugin.TextCommand):
                 try:
                     body = m.mutate(body, command)
                 except InvalidTransmutation as e:
+                    print('DEBUG !!!')
                     m.error_module.displayError("Invalid Transmutation Command: \n\n'" + e.value + "'")
                     error_status = True
                     break
