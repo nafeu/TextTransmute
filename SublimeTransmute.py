@@ -1,6 +1,8 @@
 import sublime
 import sublime_plugin
-from .components.meng import *
+from . import meng
+import re
+from . import helpers
 
 class ExampleCommand(sublime_plugin.TextCommand):
 
@@ -26,20 +28,20 @@ class ParseCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, user_input):
 
-        extra = False
+        append_to_sel = False
         error_status = False
         region_set = self.view.sel()
 
         if user_input[0] == "+":
             to_parse = user_input[1:]
-            extra = True
+            append_to_sel = True
         else:
             to_parse = user_input
 
         pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
         command_list = [x.strip() for x in pipe_pattern.split(to_parse)[1::2]]
         error_logger = WindowErrorLogger()
-        m = MutationEngine(error_logger)
+        m = meng.MutationEngine(error_logger)
         for region in region_set:
             # grab the content of the region
             body = self.view.substr(region)
@@ -47,8 +49,7 @@ class ParseCommand(sublime_plugin.TextCommand):
                 # go through each command and mutate it accordingly
                 try:
                     body = m.mutate(body, command)
-                except InvalidTransmutation as e:
-                    print('DEBUG !!!')
+                except helpers.InvalidTransmutation as e:
                     m.error_module.displayError("Invalid Transmutation Command: \n\n'" + e.value + "'")
                     error_status = True
                     break
@@ -60,7 +61,7 @@ class ParseCommand(sublime_plugin.TextCommand):
                     m.error_module.displayError("Invalid Transmutation Command: \n\n'" + str(e) + "'")
                     error_status = True
                     break
-            if extra:
+            if append_to_sel:
                 body = self.view.substr(region)+'\n\n'+body
             # call the transmutation to replace it on your screen
             if not error_status:

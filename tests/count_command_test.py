@@ -6,6 +6,14 @@ class TestCountCommand(unittest.TestCase):
     def setUp(self):
         self.m = MutationEngine()
 
+    # Test empty (1 assert)
+
+    # Test single (all of the single cases)
+
+    # Test same sample strings inside multiple options
+
+    # during setup init all of the test data
+
     def test_default_char_count(self):
         self.assertEqual(int(self.m.mutate('','count')), 0)
         self.assertEqual(int(self.m.mutate('a','count')), 1)

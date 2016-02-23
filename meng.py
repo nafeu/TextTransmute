@@ -1,8 +1,8 @@
 import getopt
 import re
 from itertools import permutations
-from .helpers import *
-import unittest
+from . import helpers
+import sublime
 
 class MutationEngine:
 
@@ -13,27 +13,27 @@ class MutationEngine:
         # list all the methods that are not default object methods
         self.command_lib = [
             method for method in dir(MutationEngine)
-                if callable(getattr(MutationEngine, method))
-                and ("__" not in method)
-                and ("mutate" not in method)
+            if callable(getattr(MutationEngine, method))
+            and ("__" not in method)
+            and ("mutate" not in method)
         ]
         if error_module:
             self.error_module = error_module
         else:
-            error_logger = ConsoleErrorLogger()
+            error_logger = helpers.ConsoleErrorLogger()
             self.error_module = error_logger
 
     def mutate(self, body, command):
         # Helpers
 
         def strip_quotes(input_string):
-            if (input_string[0] == input_string[len(input_string)-1]) and (input_string[0] in ('"',"'")):
+            if (input_string[0] == input_string[len(input_string)-1]) and (input_string[0] in ('"', "'")):
                 return input_string[1:-1]
             return input_string
 
         def eval_simple_expr(input_string):
             if (input_string[0] == input_string[len(input_string)-1]) and (input_string[0] in ('`')):
-                return simple_expr(input_string[1:-1])
+                return helpers.simple_expr(input_string[1:-1])
             return input_string
 
         def clean_param(param):
@@ -52,18 +52,18 @@ class MutationEngine:
         if self.command_name in self.command_lib:
             return str(eval("self."+self.command_name)())
         else:
-            raise InvalidTransmutation(command)
+            raise helpers.InvalidTransmutation(command)
 
     # Mutation Methods --- ADD NEW METHODS HERE
 
     def clip(self):
-        return 'CLIPBOARD GOES HERE'
+        # return 'CLIPBOARD GOES HERE'
         # root = Tkinter.Tk()
         # keep the window from showing
         # root.withdraw()
         # read the clipboard
         # return root.clipboard_get()
-        # return sublime.get_clipboard()
+        return sublime.get_clipboard()
 
     def rev(self):
         return self.body[::-1]
@@ -72,7 +72,7 @@ class MutationEngine:
 
         # Mutation Case Algorithms
         def default():
-            return simple_expr(self.body)
+            return helpers.simple_expr(self.body)
 
         # Option Parsing
         try:
@@ -99,7 +99,7 @@ class MutationEngine:
         # Mutation Case Algorithms
         def default():
             if len(self.body) > 6:
-                raise InvalidTransmutation("'perms' input too big for this dinky plugin")
+                raise helpers.InvalidTransmutation("'perms' input too big for this dinky plugin")
             else:
                 return '\n'.join(i for i in set([''.join(p) for p in permutations(self.body)]))
 
@@ -158,7 +158,7 @@ class MutationEngine:
             old_string = args[0]
             new_string = args[1]
         else:
-            raise InvalidTransmutation("'swap' command needs arguments")
+            raise helpers.InvalidTransmutation("'swap' command needs arguments")
 
         # default
         return default()
@@ -167,7 +167,7 @@ class MutationEngine:
 
         # Helpers
         def place(s, placement):
-            return str(placement.replace('{$}',str(s)))
+            return str(placement.replace('{$}', str(s)))
 
         # Option status
         placement = '{$}'
@@ -217,7 +217,7 @@ class MutationEngine:
                 range_increment *= -1
                 range_end -= 2
         else:
-            raise InvalidTransmutation("'gen' command needs arguments")
+            raise helpers.InvalidTransmutation("'gen' command needs arguments")
 
         # default
         return default()
@@ -288,6 +288,9 @@ class MutationEngine:
 
         # default
         return default()
+
+    def arash(self):
+        return "beck"
 
     '''
     COMMAND BUILDING TEMPLATE
