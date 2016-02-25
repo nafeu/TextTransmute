@@ -1,8 +1,8 @@
 import sublime
 import sublime_plugin
-from . import meng
 import re
-from . import helpers
+from .components.meng import MutationEngine
+from .components.helpers import *
 
 class ExampleCommand(sublime_plugin.TextCommand):
 
@@ -41,7 +41,7 @@ class ParseCommand(sublime_plugin.TextCommand):
         pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
         command_list = [x.strip() for x in pipe_pattern.split(to_parse)[1::2]]
         error_logger = WindowErrorLogger()
-        m = meng.MutationEngine(error_logger)
+        m = MutationEngine(error_logger)
         for region in region_set:
             # grab the content of the region
             body = self.view.substr(region)
@@ -49,7 +49,7 @@ class ParseCommand(sublime_plugin.TextCommand):
                 # go through each command and mutate it accordingly
                 try:
                     body = m.mutate(body, command)
-                except helpers.InvalidTransmutation as e:
+                except InvalidTransmutation as e:
                     m.error_module.displayError("Invalid Transmutation Command: \n\n'" + e.value + "'")
                     error_status = True
                     break

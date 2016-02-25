@@ -1,8 +1,8 @@
 import getopt
 import re
 from itertools import permutations
-from . import helpers
-import sublime
+from helpers import *
+# import sublime
 
 class MutationEngine:
 
@@ -20,7 +20,7 @@ class MutationEngine:
         if error_module:
             self.error_module = error_module
         else:
-            error_logger = helpers.ConsoleErrorLogger()
+            error_logger = ConsoleErrorLogger()
             self.error_module = error_logger
 
     def mutate(self, body, command):
@@ -33,7 +33,7 @@ class MutationEngine:
 
         def eval_simple_expr(input_string):
             if (input_string[0] == input_string[len(input_string)-1]) and (input_string[0] in ('`')):
-                return helpers.simple_expr(input_string[1:-1])
+                return simple_expr(input_string[1:-1])
             return input_string
 
         def clean_param(param):
@@ -52,18 +52,18 @@ class MutationEngine:
         if self.command_name in self.command_lib:
             return str(eval("self."+self.command_name)())
         else:
-            raise helpers.InvalidTransmutation(command)
+            raise InvalidTransmutation(command)
 
     # Mutation Methods --- ADD NEW METHODS HERE
 
-    def clip(self):
-        # return 'CLIPBOARD GOES HERE'
-        # root = Tkinter.Tk()
-        # keep the window from showing
-        # root.withdraw()
-        # read the clipboard
-        # return root.clipboard_get()
-        return sublime.get_clipboard()
+    # def clip(self):
+    #     # return 'CLIPBOARD GOES HERE'
+    #     # root = Tkinter.Tk()
+    #     # keep the window from showing
+    #     # root.withdraw()
+    #     # read the clipboard
+    #     # return root.clipboard_get()
+    #     # return sublime.get_clipboard()
 
     def rev(self):
         return self.body[::-1]
@@ -72,7 +72,7 @@ class MutationEngine:
 
         # Mutation Case Algorithms
         def default():
-            return helpers.simple_expr(self.body)
+            return simple_expr(self.body)
 
         # Option Parsing
         try:
@@ -99,7 +99,7 @@ class MutationEngine:
         # Mutation Case Algorithms
         def default():
             if len(self.body) > 6:
-                raise helpers.InvalidTransmutation("'perms' input too big for this dinky plugin")
+                raise InvalidTransmutation("'perms' input too big for this dinky plugin")
             else:
                 return '\n'.join(i for i in set([''.join(p) for p in permutations(self.body)]))
 
@@ -158,7 +158,7 @@ class MutationEngine:
             old_string = args[0]
             new_string = args[1]
         else:
-            raise helpers.InvalidTransmutation("'swap' command needs arguments")
+            raise InvalidTransmutation("'swap' command needs arguments")
 
         # default
         return default()
@@ -217,7 +217,7 @@ class MutationEngine:
                 range_increment *= -1
                 range_end -= 2
         else:
-            raise helpers.InvalidTransmutation("'gen' command needs arguments")
+            raise InvalidTransmutation("'gen' command needs arguments")
 
         # default
         return default()

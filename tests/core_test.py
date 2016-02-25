@@ -1,5 +1,5 @@
 import unittest
-from ..components.meng import *
+from .. import meng
 
 # class TestPluginMain(unittest.TestCase):
 
