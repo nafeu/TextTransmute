@@ -31,3 +31,6 @@ class TestCountCommand(unittest.TestCase):
         self.assertEqual(int(self.m.mutate('foo', 'count -s foo')), 1)
         self.assertEqual(int(self.m.mutate('a aa', 'count -s a')), 3)
         self.assertEqual(int(self.m.mutate('foo foofoo', 'count -s foo')), 3)
+
+
+        # Testing should be generalized and input specific not case specific
