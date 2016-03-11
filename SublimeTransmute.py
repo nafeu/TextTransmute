@@ -81,5 +81,5 @@ class TransmuteCommand(sublime_plugin.TextCommand):
 
 class WindowErrorLogger:
 
-    def displayError(self, message):
+    def display_error(self, message):
         sublime.error_message(message)

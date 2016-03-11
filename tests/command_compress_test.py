@@ -10,6 +10,3 @@ class TestImported1(unittest.TestCase):
         self.m = MutationEngine()
         body = self.m.mutate("a","swap a b")
         self.assertEqual(body, "b")
-
-    def tearDown(self):
-        self.m = None
