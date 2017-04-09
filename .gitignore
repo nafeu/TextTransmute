@@ -7,3 +7,4 @@ components/*.pyc
 tests/*.pyc
 *.pyc
 sandbox.py
+*.swp
