@@ -1,12 +1,11 @@
 [
 {
-    "id" : "example",
-    "caption": "Transmute",
+    "id" : "edit",
     "children":
     [
     {
         "caption" : "Transmute Selection",
-        "command" : "example"
+        "command" : "sublime_transmute"
     }
     ]
 }

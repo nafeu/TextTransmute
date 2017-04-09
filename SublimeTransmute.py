@@ -4,7 +4,7 @@ import re
 from .components.meng import MutationEngine
 from .components.helpers import *
 
-class ExampleCommand(sublime_plugin.TextCommand):
+class SublimeTransmuteCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
 
