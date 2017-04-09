@@ -6,7 +6,6 @@ class TestImported1(unittest.TestCase):
     def setUp(self):
         self.m = MutationEngine()
 
-    def test_(self):
+    def test_asdf(self):
         self.m = MutationEngine()
-        body = self.m.mutate("a","swap a b")
-        self.assertEqual(body, "b")
+        self.assertEqual(self.m.mutate("",""), "")
