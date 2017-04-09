@@ -326,8 +326,8 @@ class MutationEngine:
         # Mutation Case Algorithms
         def default():
             output = ''
-            for i in self.body.split("\n"):
-                output += (i+"\n\n")
+            for line in self.body.split("\n"):
+                output += (line.rstrip()+" ")
             return output
 
         def other_cases():
@@ -349,6 +349,107 @@ class MutationEngine:
         # Arg Handling
         if args:
             multiplier = args[0]
+
+        # default
+        return default()
+
+    def grep(self):
+
+        # Mutation Case Algorithms
+        def default():
+            output = ''
+            for line in self.body.split("\n"):
+                if pattern in line:
+                    output += (line + "\n")
+            return output
+
+        def other_cases():
+            return len(self.body.split())
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(self.params, 'lws:')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.error_module.displayError("For command: '" + self.command_name + "'\n\n" + str(err))
+            return self.body
+
+        # Option Handling
+        for o, a in opts:
+            if o == "-l":
+                return other_cases()
+
+        # Arg Handling
+        if args:
+            pattern = args[0]
+
+        # default
+        return default()
+
+    def extract(self):
+
+        # Mutation Case Algorithms
+        def default():
+            output = ''
+            for line in self.body.split("\n"):
+                lineout = ''
+                for phrase in line.split(" "):
+                    if pattern in phrase:
+                        lineout += (phrase + " ")
+                output += (lineout + "\n")
+            return output
+
+        def other_cases():
+            return len(self.body.split())
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(self.params, 'lws:')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.error_module.displayError("For command: '" + self.command_name + "'\n\n" + str(err))
+            return self.body
+
+        # Option Handling
+        for o, a in opts:
+            if o == "-l":
+                return other_cases()
+
+        # Arg Handling
+        if args:
+            pattern = args[0]
+
+        # default
+        return default()
+
+    def strip(self):
+
+        # Mutation Case Algorithms
+        def default():
+            output = ''
+            for line in self.body.split("\n"):
+                output += (line.replace(pattern, "") + "\n")
+            return output
+
+        def other_cases():
+            return len(self.body.split())
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(self.params, 'lws:')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.error_module.displayError("For command: '" + self.command_name + "'\n\n" + str(err))
+            return self.body
+
+        # Option Handling
+        for o, a in opts:
+            if o == "-l":
+                return other_cases()
+
+        # Arg Handling
+        if args:
+            pattern = args[0]
 
         # default
         return default()
