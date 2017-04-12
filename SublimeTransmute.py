@@ -3,6 +3,7 @@ import sublime_plugin
 import re
 from .components.meng import MutationEngine
 from .components.helpers import *
+from SublimeTransmute.commands import *
 
 class SublimeTransmuteCommand(sublime_plugin.TextCommand):
 
@@ -41,35 +42,43 @@ class ParseCommand(sublime_plugin.TextCommand):
         pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
         command_list = [x.strip() for x in pipe_pattern.split(to_parse)[1::2]]
         error_logger = WindowErrorLogger()
-        m = MutationEngine(error_logger)
+        # m = MutationEngine(error_logger)
         for region in region_set:
             # grab the content of the region
             body = self.view.substr(region)
-            for command in command_list:
-                # go through each command and mutate it accordingly
-                try:
-                    body = m.mutate(body, command)
-                except InvalidTransmutation as e:
-                    m.error_module.displayError("Invalid Transmutation Command: \n\n'" + e.value + "'")
-                    error_status = True
-                    break
-                except SyntaxError as e:
-                    m.error_module.displayError("Invalid Transmutation Syntax: \n\n'" + str(e) + "'")
-                    error_status = True
-                    break
-                except NameError as e:
-                    m.error_module.displayError("Invalid Transmutation Command: \n\n'" + str(e) + "'")
-                    error_status = True
-                    break
-            if append_to_sel:
-                body = self.view.substr(region)+'\n\n'+body
+
+            # for command in command_list:
+            #     # go through each command and mutate it accordingly
+            #     try:
+            #         body = m.mutate(body, command)
+            #     except InvalidTransmutation as e:
+            #         m.error_module.displayError("Invalid Transmutation Command: \n\n'" + e.value + "'")
+            #         error_status = True
+            #         break
+            #     except SyntaxError as e:
+            #         m.error_module.displayError("Invalid Transmutation Syntax: \n\n'" + str(e) + "'")
+            #         error_status = True
+            #         break
+            #     except NameError as e:
+            #         m.error_module.displayError("Invalid Transmutation Command: \n\n'" + str(e) + "'")
+            #         error_status = True
+            #         break
+            # if append_to_sel:
+            #     body = self.view.substr(region)+'\n\n'+body
+
             # call the transmutation to replace it on your screen
-            if not error_status:
+            # if not error_status:
                 # MAKE SURE YOU RE SET PROJECT DATA
                 # project_data = sublime.active_window().project_data()
                 # project_data['history'] = user_input
                 # sublime.active_window().set_project_data(project_data)
-                self.view.run_command("transmute", {"region_begin" : region.begin(), "region_end" : region.end(), "string" : body})
+
+            for command in command_list:
+
+                t = getattr(globals()[command], command.capitalize())(body)
+                self.view.run_command("transmute", {"region_begin" : region.begin(),
+                                                    "region_end" : region.end(),
+                                                    "string" : str(t.transmute())})
 
 
 class TransmuteCommand(sublime_plugin.TextCommand):
