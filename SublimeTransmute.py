@@ -33,13 +33,15 @@ class ParseCommand(sublime_plugin.TextCommand):
         error_status = False
         region_set = self.view.sel()
 
+        whitespace_pattern = re.compile(r'''((?:[^\s"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
+        pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
+
         if user_input[0] == "+":
             to_parse = user_input[1:]
             append_to_sel = True
         else:
             to_parse = user_input
 
-        pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
         command_list = [x.strip() for x in pipe_pattern.split(to_parse)[1::2]]
         error_logger = WindowErrorLogger()
         # m = MutationEngine(error_logger)
@@ -75,10 +77,31 @@ class ParseCommand(sublime_plugin.TextCommand):
 
             for command in command_list:
 
-                t = getattr(globals()[command], command.capitalize())(body)
-                self.view.run_command("transmute", {"region_begin" : region.begin(),
-                                                    "region_end" : region.end(),
-                                                    "string" : str(t.transmute())})
+                params = None
+
+                # split incoming input into a list by delimiter whitespace
+                input_split = [x for x in whitespace_pattern.split(command)[1::2]]
+                command_name = input_split[0]
+                if input_split:
+                    params = input_split[1:]
+
+                # TODO: check to see if the command exists, else raise invalid transmutation
+                command_exists = (command_name in globals() and hasattr(globals()[command_name],
+                                                                        command_name.capitalize()))
+
+                if command_exists:
+                    transmutor = getattr(globals()[command_name],
+                                         command_name.capitalize())(body,
+                                                                    params,
+                                                                    error_logger)
+                    self.view.run_command("transmute", {"region_begin" : region.begin(),
+                                                        "region_end" : region.end(),
+                                                        "string" : str(transmutor.transmute())})
+                else:
+                    error_logger.display_error("Invalid Transmutation: '" + command + "'")
+                    raise InvalidTransmutation(command)
+
+
 
 
 class TransmuteCommand(sublime_plugin.TextCommand):
@@ -92,3 +115,11 @@ class WindowErrorLogger:
 
     def display_error(self, message):
         sublime.error_message(message)
+
+# Exception Classes
+
+class InvalidTransmutation(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
