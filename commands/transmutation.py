@@ -1,5 +1,4 @@
 import getopt
-import re
 
 class Transmutation(object):
 
@@ -8,6 +7,9 @@ class Transmutation(object):
         self.params = params
         self.error_module = error_module
         self.command = self.__class__.__name__.lower()
+
+    def display_error(self, message):
+        self.error_module.display_error(message)
 
     def transmute(self):
         # Mutation Case Algorithms
@@ -22,7 +24,7 @@ class Transmutation(object):
             opts, args = getopt.getopt(self.params, 'lws:')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
-            self.error_module.display_error("For command: '" + self.command + "'\n\n" + str(err))
+            display_error("For command: '" + self.command + "'\n\n" + str(err))
             return self.body
 
         # Option Handling
