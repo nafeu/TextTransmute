@@ -1,6 +1,7 @@
 import sublime
 import sublime_plugin
 import re
+import unittest
 from .components.meng import MutationEngine
 from .components.helpers import *
 from SublimeTransmute.commands import *
@@ -44,7 +45,6 @@ class ParseCommand(sublime_plugin.TextCommand):
 
         command_list = [x.strip() for x in pipe_pattern.split(to_parse)[1::2]]
         error_logger = WindowErrorLogger()
-        # m = MutationEngine(error_logger)
         for region in region_set:
             # grab the content of the region
             body = self.view.substr(region)
@@ -91,12 +91,10 @@ class ParseCommand(sublime_plugin.TextCommand):
 
                 if command_exists:
                     transmutor = getattr(globals()[command_name],
-                                         command_name.capitalize())(body,
-                                                                    params,
-                                                                    error_logger)
+                                         command_name.capitalize())(error_logger)
                     self.view.run_command("transmute", {"region_begin" : region.begin(),
                                                         "region_end" : region.end(),
-                                                        "string" : str(transmutor.transmute())})
+                                                        "string" : str(transmutor.transmute(body, params))})
                 else:
                     error_logger.display_error("Invalid Transmutation: '" + command + "'")
                     raise InvalidTransmutation(command)
