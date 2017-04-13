@@ -31,8 +31,8 @@ class ParseCommand(sublime_plugin.TextCommand):
     def run(self, edit, user_input):
 
         append_to_sel = False
-        error_status = False
         region_set = self.view.sel()
+        error_logger = WindowErrorLogger()
 
         whitespace_pattern = re.compile(r'''((?:[^\s"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
         pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
@@ -44,36 +44,9 @@ class ParseCommand(sublime_plugin.TextCommand):
             to_parse = user_input
 
         command_list = [x.strip() for x in pipe_pattern.split(to_parse)[1::2]]
-        error_logger = WindowErrorLogger()
         for region in region_set:
             # grab the content of the region
             body = self.view.substr(region)
-
-            # for command in command_list:
-            #     # go through each command and mutate it accordingly
-            #     try:
-            #         body = m.mutate(body, command)
-            #     except InvalidTransmutation as e:
-            #         m.error_module.displayError("Invalid Transmutation Command: \n\n'" + e.value + "'")
-            #         error_status = True
-            #         break
-            #     except SyntaxError as e:
-            #         m.error_module.displayError("Invalid Transmutation Syntax: \n\n'" + str(e) + "'")
-            #         error_status = True
-            #         break
-            #     except NameError as e:
-            #         m.error_module.displayError("Invalid Transmutation Command: \n\n'" + str(e) + "'")
-            #         error_status = True
-            #         break
-            # if append_to_sel:
-            #     body = self.view.substr(region)+'\n\n'+body
-
-            # call the transmutation to replace it on your screen
-            # if not error_status:
-                # MAKE SURE YOU RE SET PROJECT DATA
-                # project_data = sublime.active_window().project_data()
-                # project_data['history'] = user_input
-                # sublime.active_window().set_project_data(project_data)
 
             for command in command_list:
 
@@ -90,16 +63,27 @@ class ParseCommand(sublime_plugin.TextCommand):
                                                                         command_name.capitalize()))
 
                 if command_exists:
-                    transmutor = getattr(globals()[command_name],
-                                         command_name.capitalize())(error_logger)
-                    self.view.run_command("transmute", {"region_begin" : region.begin(),
-                                                        "region_end" : region.end(),
-                                                        "string" : str(transmutor.transmute(body, params))})
+                    try:
+                        transmutor = getattr(globals()[command_name],
+                                             command_name.capitalize())(error_logger)
+                        body = str(transmutor.transmute(body, params))
+                    except Exception as e:
+                        error_module.displayError("Transmutation Error: '" + e.value + "'")
+                        break
                 else:
-                    error_logger.display_error("Invalid Transmutation: '" + command + "'")
+                    error_logger.display_error("Transmutation Error: '" + command + "' is not a valid command")
                     raise InvalidTransmutation(command)
 
+                if append_to_sel:
+                    body = self.view.substr(region)+'\n\n'+body
 
+                self.view.run_command("transmute", {"region_begin" : region.begin(),
+                                                    "region_end" : region.end(),
+                                                    "string" : body})
+
+        project_data = sublime.active_window().project_data()
+        project_data['history'] = user_input
+        sublime.active_window().set_project_data(project_data)
 
 
 class TransmuteCommand(sublime_plugin.TextCommand):

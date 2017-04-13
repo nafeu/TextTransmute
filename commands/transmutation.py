@@ -29,7 +29,7 @@ class Transmutation(object):
             opts, args = getopt.getopt(params, 'lws:')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
-            self.display_error("Invalid command: '" + self.command + "'\n\n" + str(err))
+            self.display_error("Transmutation Error: " + str(err) + " for " + self.command)
             return self.body
 
         # Option Handling
