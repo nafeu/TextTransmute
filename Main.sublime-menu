@@ -7,7 +7,10 @@
         "caption": "Transmute Selection",
         "children":
         [
-          { "command": "sublime_transmute" },
+          {
+            "caption": "Initate Transmutation",
+            "command": "sublime_transmute_init"
+          },
           // { "command": "..." }
         ]
       },

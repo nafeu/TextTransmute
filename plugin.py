@@ -7,12 +7,12 @@ from .commands import *
 
 # Sublime Text Plugin Commands
 
-class SublimeTransmuteCommand(sublime_plugin.TextCommand):
+class SublimeTransmuteInitCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
 
         def on_done(text):
-            self.view.run_command("parse", {"user_input": text})
+            self.view.run_command("sublime_transmute_parse", {"user_input": text})
 
         # command history persistence
         try:
@@ -27,7 +27,7 @@ class SublimeTransmuteCommand(sublime_plugin.TextCommand):
         sublime.active_window().show_input_panel("Transmute Selection", input_field, on_done, None, None)
 
 
-class ParseCommand(sublime_plugin.TextCommand):
+class SublimeTransmuteParseCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, user_input):
 
@@ -74,16 +74,16 @@ class ParseCommand(sublime_plugin.TextCommand):
                 if append_to_sel:
                     body = self.view.substr(region)+'\n\n'+body
 
-            self.view.run_command("transmute", {"region_begin" : region.begin(),
-                                                  "region_end" : region.end(),
-                                                  "string" : body})
+            self.view.run_command("sublime_transmute_exec", {"region_begin" : region.begin(),
+                                                                "region_end" : region.end(),
+                                                                "string" : body})
 
         project_data = sublime.active_window().project_data()
         project_data['history'] = user_input
         sublime.active_window().set_project_data(project_data)
 
 
-class TransmuteCommand(sublime_plugin.TextCommand):
+class SublimeTransmuteExecCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, region_begin, region_end, string):
         self.view.replace(edit, sublime.Region(region_begin, region_end), string)

@@ -1,6 +1,6 @@
 [
 {
     "keys": ["ctrl+shift+j"],
-    "command": "sublime_transmute"
+    "command": "sublime_transmute_init"
 }
 ]
