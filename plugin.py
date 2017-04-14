@@ -45,6 +45,19 @@ class SublimeTransmuteParseCommand(sublime_plugin.TextCommand):
         whitespace_pattern = re.compile(r'''((?:[^\s"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
         pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
 
+        def strip_quotes(input_string):
+            if (input_string[0] == input_string[len(input_string)-1]) and (input_string[0] in ('"', "'")):
+                return input_string[1:-1]
+            return input_string
+
+        def eval_simple_expr(input_string):
+            if (input_string[0] == input_string[len(input_string)-1]) and (input_string[0] in ('`')):
+                return simple_expr(input_string[1:-1])
+            return input_string
+
+        def clean_param(param):
+            return str(eval_simple_expr(strip_quotes(param)))
+
         if user_input[0] == "+":
             to_parse = user_input[1:]
             append_to_sel = True
@@ -61,7 +74,7 @@ class SublimeTransmuteParseCommand(sublime_plugin.TextCommand):
                 params = None
 
                 # split incoming input into a list by delimiter whitespace
-                input_split = [x for x in whitespace_pattern.split(command)[1::2]]
+                input_split = [clean_param(x) for x in whitespace_pattern.split(command)[1::2]]
                 command_name = input_split[0]
                 if input_split:
                     params = input_split[1:]
