@@ -2,5 +2,9 @@
 {
     "keys": ["ctrl+shift+j"],
     "command": "sublime_transmute_init"
-}
+},
+{
+    "keys": ["ctrl+shift+h"],
+    "command": "sublime_transmute_list"
+},
 ]

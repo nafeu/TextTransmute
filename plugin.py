@@ -5,6 +5,13 @@ import getopt
 import __future__
 from .commands import *
 
+AVAILABLE_COMMANDS = [str(x).replace("<class 'SublimeTransmute.commands.", "")
+                            .replace("'>", "")
+                            .lower()
+                            for x in globals().values()
+                            if ('SublimeTransmute.commands.' in str(x)
+                            and 'Test' not in str(x))]
+
 # Sublime Text Plugin Commands
 
 class SublimeTransmuteInitCommand(sublime_plugin.TextCommand):
@@ -87,6 +94,22 @@ class SublimeTransmuteExecCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, region_begin, region_end, string):
         self.view.replace(edit, sublime.Region(region_begin, region_end), string)
+
+class SublimeTransmuteListCommand(sublime_plugin.TextCommand):
+
+    def run(self, edit):
+
+        def on_done(text):
+            self.view.run_command("sublime_transmute_parse", {"user_input": text})
+
+        def on_select(selected_index):
+            sublime.active_window().show_input_panel("Transmute Selection", AVAILABLE_COMMANDS[selected_index], on_done, on_cancel, None)
+
+        def on_cancel():
+            project_data['history'] = ""
+            sublime.active_window().set_project_data(project_data)
+
+        sublime.active_window().show_quick_panel(AVAILABLE_COMMANDS, on_select)
 
 
 # Helpers
