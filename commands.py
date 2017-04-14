@@ -64,6 +64,7 @@ class Rev(Transmutation):
 
 class TestRev(unittest.TestCase):
 
+    # TODO: Improve tests...
     def setUp(self):
         self.t = Rev()
 
@@ -82,6 +83,7 @@ class Expr(Transmutation):
 
 class TestExpr(unittest.TestCase):
 
+    # TODO: Improve tests...
     def setUp(self):
         self.t = Expr()
 
