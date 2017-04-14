@@ -2,7 +2,6 @@ import sublime
 import sublime_plugin
 import re
 import getopt
-import __future__
 from .commands import *
 
 AVAILABLE_COMMANDS = [str(x).replace("<class 'SublimeTransmute.commands.", "")
@@ -52,7 +51,7 @@ class SublimeTransmuteParseCommand(sublime_plugin.TextCommand):
 
         def eval_simple_expr(input_string):
             if (input_string[0] == input_string[len(input_string)-1]) and (input_string[0] in ('`')):
-                return simple_expr(input_string[1:-1])
+                return eval_expr(input_string[1:-1])
             return input_string
 
         def clean_param(param):
@@ -121,36 +120,12 @@ class SublimeTransmuteListCommand(sublime_plugin.TextCommand):
         sublime.active_window().show_quick_panel(AVAILABLE_COMMANDS, on_select)
 
 
-# Helpers
+# Exception Handling
 
 class WindowErrorLogger:
 
     def display_error(self, message):
         sublime.error_message(message)
-
-
-def simple_expr(expression):
-    restrict_chars = (' ','+','-','/','*','^','%')
-    back_ops = tuple('(') + restrict_chars
-    fwd_ops = tuple(')') + restrict_chars
-    x, i = expression, 0
-    x = "("+x+")"
-    end_size = len(x)
-    while (i < len(x)-1):
-        if (i > 0):
-            if x[i] == '(' and x[i-1] not in back_ops and x[i+1] not in fwd_ops:
-                x = x[:i] + '*' + x[i:]
-            elif x[i] == ')' and x[i-1] not in back_ops and x[i+1] not in fwd_ops:
-                x = x[:i+1] + '*' + x[i+1:]
-            elif x[i] == '^':
-                x = x[:i] + '**' + x[i+1:]
-            end_size += 1
-            i += 1
-        i += 1
-    return eval(compile(x, '<string>', 'eval', __future__.division.compiler_flag))
-
-
-# Exceptions
 
 class InvalidTransmutation(Exception):
     def __init__(self, value):
