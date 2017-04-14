@@ -1,4 +1,8 @@
 import unittest
-loader = unittest.TestLoader()
-tests = loader.discover('commands', pattern = '*.py')
-unittest.TextTestRunner(verbosity=2).run(tests)
+try:
+    from commands import *
+except ImportError:
+    pass
+
+if __name__ == '__main__':
+  unittest.main()

@@ -1,10 +1,8 @@
 import sublime
 import sublime_plugin
 import re
-import unittest
-from .components.meng import MutationEngine
-from .components.helpers import *
-from SublimeTransmute.commands import *
+import getopt
+from .commands import *
 
 class SublimeTransmuteCommand(sublime_plugin.TextCommand):
 
@@ -59,16 +57,12 @@ class ParseCommand(sublime_plugin.TextCommand):
                     params = input_split[1:]
 
                 # TODO: check to see if the command exists, else raise invalid transmutation
-                command_exists = (command_name in globals() and hasattr(globals()[command_name],
-                                                                        command_name.capitalize()))
-
-                if command_exists:
+                if command_name.capitalize() in globals():
                     try:
-                        transmutor = getattr(globals()[command_name],
-                                             command_name.capitalize())(error_logger)
+                        transmutor = globals()[command_name.capitalize()](error_logger)
                         body = str(transmutor.transmute(body, params))
                     except Exception as e:
-                        error_module.displayError("Transmutation Error: '" + e.value + "'")
+                        error_logger.display_error("Transmutation Error: '" + str(e) + "'")
                         break
                 else:
                     error_logger.display_error("Transmutation Error: '" + command + "' is not a valid command")
@@ -77,9 +71,9 @@ class ParseCommand(sublime_plugin.TextCommand):
                 if append_to_sel:
                     body = self.view.substr(region)+'\n\n'+body
 
-                self.view.run_command("transmute", {"region_begin" : region.begin(),
-                                                    "region_end" : region.end(),
-                                                    "string" : body})
+            self.view.run_command("transmute", {"region_begin" : region.begin(),
+                                                  "region_end" : region.end(),
+                                                  "string" : body})
 
         project_data = sublime.active_window().project_data()
         project_data['history'] = user_input

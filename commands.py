@@ -54,3 +54,16 @@ class TestTransmutation(unittest.TestCase):
 
     def test_other_case(self):
         self.assertEqual(self.t.transmute("asdf", ['-l']), "asdfasdf")
+
+class Rev(Transmutation):
+
+    def transmute(self, body, params=None):
+        return body[::-1]
+
+class TestRev(unittest.TestCase):
+
+    def setUp(self):
+        self.t = Rev()
+
+    def test_default(self):
+        self.assertEqual(self.t.transmute("asdf"), "fdsa")
