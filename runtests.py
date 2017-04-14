@@ -1,6 +1,7 @@
 import unittest
 try:
     from commands import *
+    from custom import *
 except ImportError:
     pass
 

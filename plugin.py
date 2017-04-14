@@ -2,13 +2,23 @@ import sublime
 import sublime_plugin
 import re
 from .commands import *
+from .custom import *
 
-AVAILABLE_COMMANDS = [str(t).replace("<class 'SublimeTransmute.commands.", "")
-                      .replace("'>", "")
-                      .lower()
-                      for t in globals().values()
-                      if ('SublimeTransmute.commands.' in str(t)
-                          and 'Test' not in str(t))]
+BUILT_IN_COMMANDS = [str(t).replace("<class 'SublimeTransmute.commands.", "")
+                     .replace("'>", "")
+                     .lower()
+                     for t in globals().values()
+                     if ('SublimeTransmute.commands.' in str(t)
+                         and 'Test' not in str(t))]
+
+CUSTOM_COMMANDS = [str(t).replace("<class 'SublimeTransmute.custom.", "")
+                   .replace("'>", "")
+                   .lower()
+                   for t in globals().values()
+                   if ('SublimeTransmute.custom.' in str(t)
+                       and 'Test' not in str(t))]
+
+AVAILABLE_COMMANDS = BUILT_IN_COMMANDS + CUSTOM_COMMANDS
 
 # Sublime Text Plugin Commands
 
@@ -90,12 +100,10 @@ class SublimeTransmuteParseCommand(sublime_plugin.TextCommand):
                         transmutor = globals()[command_name.capitalize()](error_logger)
                         body = str(transmutor.transmute(body, params))
                     except Exception as e:
-                        error_logger.display_error("Transmutation Error: '%s'",
-                                                   str(e))
+                        error_logger.display_error("Transmutation Error: '" + str(e) + "'")
                         break
                 else:
-                    error_logger.display_error("Transmutation Error: '%s' is not a valid command",
-                                               command)
+                    error_logger.display_error("Transmutation Error: '" + command + "' is not a valid command")
                     raise InvalidTransmutation(command)
                 if append_to_sel:
                     body = self.view.substr(region)+'\n\n'+body
