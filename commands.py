@@ -73,7 +73,12 @@ class TestRev(unittest.TestCase):
 class Expr(Transmutation):
 
     def transmute(self, body, params=None):
-        return eval_expr(body)
+        try:
+            return eval_expr(body)
+        except Exception:
+            pass
+        return body
+
 
 class TestExpr(unittest.TestCase):
 
