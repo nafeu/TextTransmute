@@ -1,12 +1,16 @@
 [
-{
+  {
     "id" : "edit",
     "children":
     [
-    {
-        "caption" : "Transmute Selection",
-        "command" : "sublime_transmute"
-    }
+      {
+        "caption": "Transmute Selection",
+        "children":
+        [
+          { "command": "sublime_transmute" },
+          // { "command": "..." }
+        ]
+      },
     ]
-}
+  }
 ]
