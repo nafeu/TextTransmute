@@ -1,3 +1,25 @@
+'''
+  ___  _   _  ___  _     ___  __  __  ___
+ / __|| | | || _ )| |   |_ _||  \/  || __|
+ \__ \| |_| || _ \| |__  | | | |\/| || _|
+ |___/ \___/ |___/|____||___||_|  |_||___|
+  _____  ___    _    _  _  ___  __  __  _   _  _____  ___
+ |_   _|| _ \  /_\  | \| |/ __||  \/  || | | ||_   _|| __|
+   | |  |   / / _ \ | .` |\__ \| |\/| || |_| |  | |  | _|
+   |_|  |_|_\/_/ \_\|_|\_||___/|_|  |_| \___/   |_|  |___|
+
+  An experimental sublime text plugin that allows you to mutate selected
+  text in a style inspired by VIM, Emacs macros and shell programming tools.
+
+  PRs, Questions, Issues -> @nafeu (github.com/nafeu)
+
+  ----------------------------------------------------
+  TO MAKE CUSTOM COMMANDS REFER TO:
+  'Sublime Text 3/Packages/SublimeTransmute/custom.py'
+  ----------------------------------------------------
+
+'''
+
 import sublime
 import sublime_plugin
 import re
