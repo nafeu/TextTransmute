@@ -36,21 +36,23 @@ KEYMAP_PATH = '%s/Default (%s).sublime-keymap' % (PLUGIN_PATH, PLATFORM)
 CUSTOM_COMMANDS_PATH = '%s/custom.py' % (PLUGIN_PATH)
 ALIAS_PATH = '%s/alias.py' % (PLUGIN_PATH)
 
-BUILT_IN_COMMANDS = [str(t).replace("<class 'TextTransmute.commands.", "")
+BUILT_IN_COMMANDS = [str(t).replace("<class 'text-transmute.commands.", "")
                      .replace("'>", "")
                      .lower()
                      for t in globals().values()
-                     if ('TextTransmute.commands.' in str(t)
+                     if ('text-transmute.commands.' in str(t)
                          and 'Test' not in str(t))]
 
-CUSTOM_COMMANDS = [str(t).replace("<class 'TextTransmute.custom.", "")
+CUSTOM_COMMANDS = [str(t).replace("<class 'text-transmute.custom.", "")
                    .replace("'>", "")
                    .lower()
                    for t in globals().values()
-                   if ('TextTransmute.custom.' in str(t)
+                   if ('text-transmute.custom.' in str(t)
                        and 'Test' not in str(t))]
 
 AVAILABLE_COMMANDS = BUILT_IN_COMMANDS + CUSTOM_COMMANDS
+
+print(AVAILABLE_COMMANDS)
 
 # Sublime Text Plugin Commands
 
@@ -166,12 +168,19 @@ class TextTransmuteListCommand(sublime_plugin.TextCommand):
         def on_done(text):
             self.view.run_command("text_transmute_parse", {"user_input": text})
 
+        def on_change(text):
+            update_current_input(text)
+
+        def on_cancel():
+            reset_current_input()
+
         def on_select(selected_index):
+
             sublime.active_window().show_input_panel("Transmute Selection",
-                                                     AVAILABLE_COMMANDS[selected_index],
+                                                     upsert_current_input(AVAILABLE_COMMANDS[selected_index]),
                                                      on_done,
-                                                     None,
-                                                     None)
+                                                     on_change,
+                                                     on_cancel)
 
         sublime.active_window().show_quick_panel(AVAILABLE_COMMANDS, on_select)
 
@@ -200,6 +209,28 @@ class TextTransmuteAlias(sublime_plugin.TextCommand):
                                       {"user_input": TRANSMUTATION_ALIASES[selected_index][1]})
 
         sublime.active_window().show_quick_panel(TRANSMUTATION_ALIASES, on_done)
+
+# Helpers
+
+def upsert_current_input(new_input):
+    project_data = sublime.active_window().project_data()
+    delimiter = " | "
+    if 'current_input' not in project_data.keys():
+        project_data['current_input'] = ""
+        delimiter = ""
+    project_data['current_input'] = project_data['current_input'] + delimiter + new_input
+    sublime.active_window().set_project_data(project_data)
+    return project_data['current_input']
+
+def update_current_input(updated_input):
+    project_data = sublime.active_window().project_data()
+    project_data['current_input'] = updated_input
+    sublime.active_window().set_project_data(project_data)
+
+def reset_current_input():
+    project_data = sublime.active_window().project_data()
+    project_data['current_input'] = ""
+    sublime.active_window().set_project_data(project_data)
 
 
 # Exception Handling
