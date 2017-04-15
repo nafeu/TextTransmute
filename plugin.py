@@ -28,6 +28,10 @@ import re
 from .commands import *
 from .custom import *
 
+PLUGIN_PATH = sublime.active_window().extract_variables()['folder']
+PLATFORM = sublime.active_window().extract_variables()['platform']
+KEYMAP_PATH = '%s/Default (%s).sublime-keymap' % (PLUGIN_PATH, PLATFORM)
+
 BUILT_IN_COMMANDS = [str(t).replace("<class 'TextTransmute.commands.", "")
                      .replace("'>", "")
                      .lower()
@@ -167,6 +171,10 @@ class TextTransmuteListCommand(sublime_plugin.TextCommand):
 
         sublime.active_window().show_quick_panel(AVAILABLE_COMMANDS, on_select)
 
+class TextTransmuteEditKeyBinds(sublime_plugin.TextCommand):
+
+    def run(self, edit):
+        sublime.active_window().open_file(KEYMAP_PATH)
 
 # Exception Handling
 
