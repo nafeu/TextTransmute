@@ -46,7 +46,7 @@ except ValueError:
     The 'transmute' method will be called on the 'body' of text
     you have selected. To learn about the 'params' argument,
     observe the base 'Transmutation' class found inside
-    'Packages/SublimeTransmute/commands.py'
+    'Packages/TextTransmute/commands.py'
 
   4. Return a string in your transmute method, this is what you'll be
      mutating your selected text into
@@ -69,7 +69,7 @@ class TestFoo(unittest.TestCase):
         self.assertEqual(self.t.transmute(), "Bar")
         self.assertEqual(self.t.transmute("Foo"), "Bar")
 
-#  6. Run the test using 'python Packages/SublimeTransmute/runtests.py'
+#  6. Run the test using 'python Packages/TextTransmute/runtests.py'
 
 #  7. Check out the following example commands
 
@@ -106,16 +106,10 @@ class TestLeet(unittest.TestCase):
     def test_default(self):
         self.assertEqual(self.t.transmute("Leet Noobs"), "1337 n00b5")
 
-'''
-  ----------------------------------------------------
-  // CONTRIBUTE!
-  ----------------------------------------------------
-
-  Please feel free to contribute to the plugin, I would love to add
-  useful commands to the built in set
-
-  -- [ github.com/nafeu/sublime-transmute ] --
 
 '''
+Please feel free to contribute your best custom commands to the plugin!
+github.com/nafeu/text-transmute
 
-# Add your custom commands below...
+Add your custom commands below...
+'''

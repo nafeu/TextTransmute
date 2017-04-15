@@ -1,12 +1,14 @@
 '''
-  ___  _   _  ___  _     ___  __  __  ___
- / __|| | | || _ )| |   |_ _||  \/  || __|
- \__ \| |_| || _ \| |__  | | | |\/| || _|
- |___/ \___/ |___/|____||___||_|  |_||___|
-  _____  ___    _    _  _  ___  __  __  _   _  _____  ___
- |_   _|| _ \  /_\  | \| |/ __||  \/  || | | ||_   _|| __|
-   | |  |   / / _ \ | .` |\__ \| |\/| || |_| |  | |  | _|
-   |_|  |_|_\/_/ \_\|_|\_||___/|_|  |_| \___/   |_|  |___|
+  _____  _____ __  __ _____
+ |_   _|| ____|\ \/ /|_   _|
+   | |  |  _|   \  /   | |
+   | |  | |___  /  \   | |
+   |_|  |_____|/_/\_\  |_|
+  _____  ____      _     _   _  ____   __  __  _   _  _____  _____
+ |_   _||  _ \    / \   | \ | |/ ___| |  \/  || | | ||_   _|| ____|
+   | |  | |_) |  / _ \  |  \| |\___ \ | |\/| || | | |  | |  |  _|
+   | |  |  _ <  / ___ \ | |\  | ___) || |  | || |_| |  | |  | |___
+   |_|  |_| \_\/_/   \_\|_| \_||____/ |_|  |_| \___/   |_|  |_____|
 
   An experimental sublime text plugin that allows you to mutate selected
   text in a style inspired by VIM, Emacs macros and shell programming tools.
@@ -15,7 +17,7 @@
 
   ----------------------------------------------------
   TO MAKE CUSTOM COMMANDS REFER TO:
-  'Sublime Text 3/Packages/SublimeTransmute/custom.py'
+  'Sublime Text 3/Packages/TextTransmute/custom.py'
   ----------------------------------------------------
 
 '''
@@ -26,25 +28,25 @@ import re
 from .commands import *
 from .custom import *
 
-BUILT_IN_COMMANDS = [str(t).replace("<class 'SublimeTransmute.commands.", "")
+BUILT_IN_COMMANDS = [str(t).replace("<class 'TextTransmute.commands.", "")
                      .replace("'>", "")
                      .lower()
                      for t in globals().values()
-                     if ('SublimeTransmute.commands.' in str(t)
+                     if ('TextTransmute.commands.' in str(t)
                          and 'Test' not in str(t))]
 
-CUSTOM_COMMANDS = [str(t).replace("<class 'SublimeTransmute.custom.", "")
+CUSTOM_COMMANDS = [str(t).replace("<class 'TextTransmute.custom.", "")
                    .replace("'>", "")
                    .lower()
                    for t in globals().values()
-                   if ('SublimeTransmute.custom.' in str(t)
+                   if ('TextTransmute.custom.' in str(t)
                        and 'Test' not in str(t))]
 
 AVAILABLE_COMMANDS = BUILT_IN_COMMANDS + CUSTOM_COMMANDS
 
 # Sublime Text Plugin Commands
 
-class SublimeTransmuteInitCommand(sublime_plugin.TextCommand):
+class TextTransmuteInitCommand(sublime_plugin.TextCommand):
     """
     TODO: Add docstring...
     """
@@ -70,7 +72,7 @@ class SublimeTransmuteInitCommand(sublime_plugin.TextCommand):
                                                  None)
 
 
-class SublimeTransmuteParseCommand(sublime_plugin.TextCommand):
+class TextTransmuteParseCommand(sublime_plugin.TextCommand):
     """
     TODO: Add docstring...
     """
@@ -139,7 +141,7 @@ class SublimeTransmuteParseCommand(sublime_plugin.TextCommand):
         sublime.active_window().set_project_data(project_data)
 
 
-class SublimeTransmuteExecCommand(sublime_plugin.TextCommand):
+class TextTransmuteExecCommand(sublime_plugin.TextCommand):
     """
     TODO: Add docstring...
     """
@@ -147,7 +149,7 @@ class SublimeTransmuteExecCommand(sublime_plugin.TextCommand):
         self.view.replace(edit, sublime.Region(region_begin, region_end), string)
 
 
-class SublimeTransmuteListCommand(sublime_plugin.TextCommand):
+class TextTransmuteListCommand(sublime_plugin.TextCommand):
     """
     TODO: Add docstring...
     """

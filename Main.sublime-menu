@@ -9,11 +9,11 @@
         [
           {
             "caption": "Initate Transmutation",
-            "command": "sublime_transmute_init"
+            "command": "text_transmute_init"
           },
           {
             "caption": "List Available Transmutations",
-            "command": "sublime_transmute_list"
+            "command": "text_transmute_list"
           },
         ]
       },
