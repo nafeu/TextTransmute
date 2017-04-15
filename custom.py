@@ -26,7 +26,8 @@ except ValueError:
   // TUTORIAL - START HERE!
   ----------------------------------------------------
 
-  0. Lets say we want to make a command called 'Foo'
+  0. Lets say we want to make a command called 'Foo' which will swap
+     any selection you have with the string "bar"
 
   1. Create a new class inheriting from Transmutation like so:
 

@@ -19,6 +19,10 @@
             "caption": "Edit Key Bindings",
             "command": "text_transmute_edit_key_binds"
           },
+          {
+            "caption": "Add Custom Commands",
+            "command": "text_transmute_add_custom_commands"
+          }
         ]
       },
     ]
