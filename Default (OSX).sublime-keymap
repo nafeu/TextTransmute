@@ -5,6 +5,6 @@
 },
 {
     "keys": ["ctrl+shift+h"],
-    "command": "text_transmute_list"
+    "command": "text_transmute_alias"
 },
 ]

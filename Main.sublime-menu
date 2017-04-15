@@ -8,11 +8,19 @@
         "children":
         [
           {
-            "caption": "Initate Transmutation",
+            "caption": "Initiate Transmutation Alias",
+            "command": "text_transmute_alias"
+          },
+          {
+            "caption": "Initate Raw Transmutation",
             "command": "text_transmute_init"
           },
           {
-            "caption": "List Available Transmutations",
+            "caption": "Edit/Add Transmutation Alias",
+            "command": "text_transmute_edit_alias"
+          },
+          {
+            "caption": "List Available Transmute Commands",
             "command": "text_transmute_list"
           },
           {
@@ -20,9 +28,9 @@
             "command": "text_transmute_edit_key_binds"
           },
           {
-            "caption": "Add Custom Commands",
+            "caption": "Edit/Add Custom Transmute Commands",
             "command": "text_transmute_add_custom_commands"
-          }
+          },
         ]
       },
     ]

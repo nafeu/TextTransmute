@@ -17,7 +17,7 @@
 
   ----------------------------------------------------
   TO MAKE CUSTOM COMMANDS REFER TO:
-  'Sublime Text 3/Packages/TextTransmute/custom.py'
+  'Sublime Text 3/Packages/text-transmute/custom.py'
   ----------------------------------------------------
 
 '''
@@ -27,11 +27,14 @@ import sublime_plugin
 import re
 from .commands import *
 from .custom import *
+from .alias import *
 
-PLUGIN_PATH = sublime.active_window().extract_variables()['folder']
-PLATFORM = sublime.active_window().extract_variables()['platform']
+PACKAGES_PATH = sublime.packages_path()
+PLUGIN_PATH = PACKAGES_PATH + "/text-transmute"
+PLATFORM = sublime.platform()
 KEYMAP_PATH = '%s/Default (%s).sublime-keymap' % (PLUGIN_PATH, PLATFORM)
 CUSTOM_COMMANDS_PATH = '%s/custom.py' % (PLUGIN_PATH)
+ALIAS_PATH = '%s/alias.py' % (PLUGIN_PATH)
 
 BUILT_IN_COMMANDS = [str(t).replace("<class 'TextTransmute.commands.", "")
                      .replace("'>", "")
@@ -58,7 +61,7 @@ class TextTransmuteInitCommand(sublime_plugin.TextCommand):
     def run(self, edit):
 
         def on_done(text):
-            self.view.run_command("sublime_transmute_parse",
+            self.view.run_command("text_transmute_parse",
                                   {"user_input": text})
 
         try:
@@ -137,7 +140,7 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
                 if append_to_sel:
                     body = self.view.substr(region)+'\n\n'+body
 
-            self.view.run_command("sublime_transmute_exec", {"region_begin" : region.begin(),
+            self.view.run_command("text_transmute_exec", {"region_begin" : region.begin(),
                                                              "region_end" : region.end(),
                                                              "string" : body})
 
@@ -161,7 +164,7 @@ class TextTransmuteListCommand(sublime_plugin.TextCommand):
     def run(self, edit):
 
         def on_done(text):
-            self.view.run_command("sublime_transmute_parse", {"user_input": text})
+            self.view.run_command("text_transmute_parse", {"user_input": text})
 
         def on_select(selected_index):
             sublime.active_window().show_input_panel("Transmute Selection",
@@ -181,6 +184,23 @@ class TextTransmuteAddCustomCommands(sublime_plugin.TextCommand):
 
     def run(self, edit):
         sublime.active_window().open_file(CUSTOM_COMMANDS_PATH)
+
+class TextTransmuteEditAlias(sublime_plugin.TextCommand):
+
+    def run(self, edit):
+        sublime.active_window().open_file(ALIAS_PATH)
+
+class TextTransmuteAlias(sublime_plugin.TextCommand):
+
+    def run(self, edit):
+
+        def on_done(selected_index):
+            if (selected_index >= 0):
+                self.view.run_command("text_transmute_parse",
+                                      {"user_input": TRANSMUTATION_ALIASES[selected_index][1]})
+
+        sublime.active_window().show_quick_panel(TRANSMUTATION_ALIASES, on_done)
+
 
 # Exception Handling
 
