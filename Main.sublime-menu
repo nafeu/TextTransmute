@@ -8,19 +8,19 @@
         "children":
         [
           {
-            "caption": "Initiate Transmutation Alias",
+            "caption": "Use Alias",
             "command": "text_transmute_alias"
           },
           {
-            "caption": "Initate Raw Transmutation",
+            "caption": "Perform Raw Transmutation",
             "command": "text_transmute_init"
           },
           {
-            "caption": "Edit/Add Transmutation Alias",
+            "caption": "Edit Aliases",
             "command": "text_transmute_edit_alias"
           },
           {
-            "caption": "List Available Transmute Commands",
+            "caption": "List Available Commands",
             "command": "text_transmute_list"
           },
           {

@@ -1,0 +1,26 @@
+[
+  {
+    "caption": "Text Transmute: Use Alias",
+    "command": "text_transmute_alias"
+  },
+  {
+    "caption": "Text Transmute: Perform Raw Transmutation",
+    "command": "text_transmute_init"
+  },
+  {
+    "caption": "Text Transmute: Edit Aliases",
+    "command": "text_transmute_edit_alias"
+  },
+  {
+    "caption": "Text Transmute: List Available Commands",
+    "command": "text_transmute_list"
+  },
+  {
+    "caption": "Text Transmute: Edit Key Bindings",
+    "command": "text_transmute_edit_key_binds"
+  },
+  {
+    "caption": "Text Transmute: Add/Edit Custom Commands",
+    "command": "text_transmute_add_custom_commands"
+  },
+]
