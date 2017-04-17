@@ -31,7 +31,6 @@ from .alias import *
 
 PACKAGES_PATH = sublime.packages_path()
 PLUGIN_PATH = PACKAGES_PATH + "/text-transmute"
-DATA_PATH = PLUGIN_PATH + "/Data.sublime-project"
 PLATFORM = sublime.platform()
 KEYMAP_PATH = '%s/Default (%s).sublime-keymap' % (PLUGIN_PATH, PLATFORM)
 CUSTOM_COMMANDS_PATH = '%s/custom.py' % (PLUGIN_PATH)
@@ -79,7 +78,7 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
     def run(self, edit, user_input):
 
         append_to_sel = False
-        region_set = self.view.sel()
+        region_set = sublime.active_window().active_view().sel()
 
         error_logger = WindowErrorLogger()
 
@@ -110,7 +109,7 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
         command_list = [x.strip() for x in pipe_pattern.split(to_parse)[1::2]]
         for region in region_set:
 
-            body = self.view.substr(region)
+            body = sublime.active_window().active_view().substr(region)
 
             for command in command_list:
                 params = None
@@ -131,11 +130,11 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
                     error_logger.display_error("Transmutation Error: '" + command + "' is not a valid command")
                     raise InvalidTransmutation(command)
                 if append_to_sel:
-                    body = self.view.substr(region)+'\n\n'+body
+                    body = sublime.active_window().active_view().substr(region)+'\n\n'+body
 
-            self.view.run_command("text_transmute_exec", {"region_begin" : region.begin(),
-                                                             "region_end" : region.end(),
-                                                             "string" : body})
+            sublime.active_window().active_view().run_command("text_transmute_exec", {"region_begin" : region.begin(),
+                                                        "region_end" : region.end(),
+                                                        "string" : body})
 
         reset_current_input()
 
@@ -223,21 +222,21 @@ class TextTransmuteAlias(sublime_plugin.TextCommand):
 
 def get_current_input():
     try:
-        f = open(DATA_PATH, 'r')
+        f = open(sublime.packages_path() + "/text-transmute/Data.sublime-project", 'r')
         return f.read()
-    except IOError:
-        f = open(DATA_PATH, 'w')
+    except FileNotFoundError:
+        f = open(sublime.packages_path() + "/text-transmute/Data.sublime-project", 'w')
         f.write("")
         f.close()
         return ""
 
 def set_current_input(text):
-    f = open(DATA_PATH, 'w')
+    f = open(sublime.packages_path() + "/text-transmute/Data.sublime-project", 'w')
     f.write(text)
     f.close()
 
 def reset_current_input():
-    f = open(DATA_PATH, 'w')
+    f = open(sublime.packages_path() + "/text-transmute/Data.sublime-project", 'w')
     f.write("")
     f.close()
 
