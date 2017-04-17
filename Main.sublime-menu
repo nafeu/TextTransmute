@@ -16,7 +16,7 @@
             "command": "text_transmute_alias"
           },
           {
-            "caption": "Edit Aliases",
+            "caption": "Edit/Add Aliases",
             "command": "text_transmute_edit_alias"
           },
           {

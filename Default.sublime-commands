@@ -8,7 +8,7 @@
     "command": "text_transmute_alias"
   },
   {
-    "caption": "Text Transmute: Edit Aliases",
+    "caption": "Text Transmute: Edit/Add Aliases",
     "command": "text_transmute_edit_alias"
   },
   {
@@ -16,7 +16,7 @@
     "command": "text_transmute_edit_key_binds"
   },
   {
-    "caption": "Text Transmute: Add/Edit Custom Commands",
+    "caption": "Text Transmute: Edit/Add Custom Commands",
     "command": "text_transmute_add_custom_commands"
   },
 ]
