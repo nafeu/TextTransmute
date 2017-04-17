@@ -17,7 +17,7 @@
 
   ----------------------------------------------------
   TO MAKE CUSTOM COMMANDS REFER TO:
-  'Sublime Text 3/Packages/text-transmute/custom.py'
+  'Sublime Text 3/Packages/TextTransmute/custom.py'
   ----------------------------------------------------
 
 '''
@@ -33,8 +33,8 @@ from .alias import *
 AVAILABLE_COMMANDS = [["...", "New Blank Transmutation"]] + \
                       [[t.__name__.lower(), inspect.getdoc(t)]
                       for t in globals().values()
-                      if (('text-transmute.commands' in str(t)
-                      or 'text-transmute.custom' in str(t))
+                      if (('TextTransmute.commands' in str(t)
+                      or 'TextTransmute.custom' in str(t))
                       and 'test' not in str(t).lower())]
 
 # Sublime Text Plugin Commands
@@ -166,7 +166,7 @@ class TextTransmuteEditKeyBinds(sublime_plugin.TextCommand):
 
     def run(self, edit):
         keymap_path = '%s/%s/Default (%s)%s' % (sublime.packages_path(),
-                                                "text-transmute",
+                                                "TextTransmute",
                                                 format_platform(sublime.platform()),
                                                 ".sublime-keymap")
         sublime.active_window().open_file(keymap_path)
@@ -175,7 +175,7 @@ class TextTransmuteAddCustomCommands(sublime_plugin.TextCommand):
 
     def run(self, edit):
         custom_commands_path = '%s/%s/%s' % (sublime.packages_path(),
-                                             "text-transmute",
+                                             "TextTransmute",
                                              "custom.py")
         sublime.active_window().open_file(custom_commands_path)
 
@@ -183,7 +183,7 @@ class TextTransmuteEditAlias(sublime_plugin.TextCommand):
 
     def run(self, edit):
         alias_path = '%s/%s/%s' % (sublime.packages_path(),
-                                   "text-transmute",
+                                   "TextTransmute",
                                    "alias.py")
         sublime.active_window().open_file(alias_path)
 
@@ -216,12 +216,12 @@ class TextTransmuteHistory(sublime_plugin.TextCommand):
 def get_current_input():
     try:
         f = open('%s/%s/%s' % (sublime.packages_path(),
-                               "text-transmute",
+                               "TextTransmute",
                                "Data.sublime-project"), 'r')
         return f.read()
     except FileNotFoundError:
         f = open('%s/%s/%s' % (sublime.packages_path(),
-                               "text-transmute",
+                               "TextTransmute",
                                "Data.sublime-project"), 'w')
         f.write("")
         f.close()
@@ -229,21 +229,21 @@ def get_current_input():
 
 def set_current_input(text):
     f = open('%s/%s/%s' % (sublime.packages_path(),
-                           "text-transmute",
+                           "TextTransmute",
                            "Data.sublime-project"), 'w')
     f.write(text)
     f.close()
 
 def reset_current_input():
     f = open('%s/%s/%s' % (sublime.packages_path(),
-                           "text-transmute",
+                           "TextTransmute",
                            "Data.sublime-project"), 'w')
     f.write("")
     f.close()
 
 def get_history():
     f = open('%s/%s/%s' % (sublime.packages_path(),
-                           "text-transmute",
+                           "TextTransmute",
                            "History.sublime-project"), 'r')
     content = f.readlines()
     f.close()
@@ -251,14 +251,14 @@ def get_history():
 
 def append_to_history(text):
     f = open('%s/%s/%s' % (sublime.packages_path(),
-                           "text-transmute",
+                           "TextTransmute",
                            "History.sublime-project"), 'a')
     f.write("\n" + text)
     f.close()
 
 def reset_history():
     f = open('%s/%s/%s' % (sublime.packages_path(),
-                           "text-transmute",
+                           "TextTransmute",
                            "History.sublime-project"), 'w')
     f.write("")
     f.close()
