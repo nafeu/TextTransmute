@@ -29,13 +29,6 @@ from .commands import *
 from .custom import *
 from .alias import *
 
-PACKAGES_PATH = sublime.packages_path()
-PLUGIN_PATH = PACKAGES_PATH + "/text-transmute"
-PLATFORM = format_platform(sublime.platform())
-KEYMAP_PATH = '%s/Default (%s).sublime-keymap' % (PLUGIN_PATH, PLATFORM)
-CUSTOM_COMMANDS_PATH = '%s/custom.py' % (PLUGIN_PATH)
-ALIAS_PATH = '%s/alias.py' % (PLUGIN_PATH)
-
 BUILT_IN_COMMANDS = [str(t).replace("<class 'text-transmute.commands.", "")
                      .replace("'>", "")
                      .lower()
@@ -116,8 +109,8 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
                     body = sublime.active_window().active_view().substr(region)+'\n\n'+body
 
             sublime.active_window().active_view().run_command("text_transmute_exec", {"region_begin" : region.begin(),
-                                                        "region_end" : region.end(),
-                                                        "string" : body})
+                                                                                      "region_end" : region.end(),
+                                                                                      "string" : body})
 
         reset_current_input()
 
@@ -177,17 +170,27 @@ class TextTransmuteInitCommand(sublime_plugin.TextCommand):
 class TextTransmuteEditKeyBinds(sublime_plugin.TextCommand):
 
     def run(self, edit):
-        sublime.active_window().open_file(KEYMAP_PATH)
+        keymap_path = '%s/%s/Default (%s)%s' % (sublime.packages_path(),
+                                                "text-transmute",
+                                                format_platform(sublime.platform()),
+                                                ".sublime-keymap")
+        sublime.active_window().open_file(keymap_path)
 
 class TextTransmuteAddCustomCommands(sublime_plugin.TextCommand):
 
     def run(self, edit):
-        sublime.active_window().open_file(CUSTOM_COMMANDS_PATH)
+        custom_commands_path = '%s/%s/%s' % (sublime.packages_path(),
+                                             "text-transmute",
+                                             "custom.py")
+        sublime.active_window().open_file(custom_commands_path)
 
 class TextTransmuteEditAlias(sublime_plugin.TextCommand):
 
     def run(self, edit):
-        sublime.active_window().open_file(ALIAS_PATH)
+        alias_path = '%s/%s/%s' % (sublime.packages_path(),
+                                   "text-transmute",
+                                   "alias.py")
+        sublime.active_window().open_file(alias_path)
 
 class TextTransmuteAlias(sublime_plugin.TextCommand):
 
@@ -197,29 +200,37 @@ class TextTransmuteAlias(sublime_plugin.TextCommand):
 
             if (selected_index >= 0):
                 self.view.run_command("text_transmute_parse",
-                                      {"user_input": TRANSMUTATION_ALIASES[selected_index][1]})
+                                      {"user_input": ALIASES[selected_index][1]})
 
-        sublime.active_window().show_quick_panel(TRANSMUTATION_ALIASES, on_done)
+        sublime.active_window().show_quick_panel(ALIASES, on_done)
 
 # Helpers
 
 def get_current_input():
     try:
-        f = open(sublime.packages_path() + "/text-transmute/Data.sublime-project", 'r')
+        f = open('%s/%s/%s' % (sublime.packages_path(),
+                               "text-transmute",
+                               "Data.sublime-project"), 'r')
         return f.read()
     except FileNotFoundError:
-        f = open(sublime.packages_path() + "/text-transmute/Data.sublime-project", 'w')
+        f = open('%s/%s/%s' % (sublime.packages_path(),
+                               "text-transmute",
+                               "Data.sublime-project"), 'w')
         f.write("")
         f.close()
         return ""
 
 def set_current_input(text):
-    f = open(sublime.packages_path() + "/text-transmute/Data.sublime-project", 'w')
+    f = open('%s/%s/%s' % (sublime.packages_path(),
+                           "text-transmute",
+                           "Data.sublime-project"), 'w')
     f.write(text)
     f.close()
 
 def reset_current_input():
-    f = open(sublime.packages_path() + "/text-transmute/Data.sublime-project", 'w')
+    f = open('%s/%s/%s' % (sublime.packages_path(),
+                           "text-transmute",
+                           "Data.sublime-project"), 'w')
     f.write("")
     f.close()
 
@@ -228,7 +239,6 @@ def format_platform(platform):
         return platform.capitalize()
     else:
         return platform.upper()
-
 
 # Exception Handling
 
