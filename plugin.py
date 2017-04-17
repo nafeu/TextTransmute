@@ -45,6 +45,7 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
     """
     def run(self, edit, user_input):
 
+        success = True
         append_to_sel = False
         region_set = sublime.active_window().active_view().sel()
 
@@ -92,6 +93,7 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
                         transmutor = globals()[command_name.capitalize()](error_logger)
                         body = str(transmutor.transmute(body, params))
                     except Exception as e:
+                        success = False
                         error_logger.display_error("Transmutation Error: '" + str(e) + "'")
                         break
                 else:
@@ -103,7 +105,8 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
             sublime.active_window().active_view().run_command("text_transmute_exec", {"region_begin" : region.begin(),
                                                                                       "region_end" : region.end(),
                                                                                       "string" : body})
-
+        if success:
+            append_to_history(user_input)
         reset_current_input()
 
 class TextTransmuteExecCommand(sublime_plugin.TextCommand):
@@ -196,6 +199,18 @@ class TextTransmuteAlias(sublime_plugin.TextCommand):
 
         sublime.active_window().show_quick_panel(ALIASES, on_done)
 
+class TextTransmuteHistory(sublime_plugin.TextCommand):
+
+    def run(self, edit):
+
+        history = get_history()
+
+        def on_done(selected_index):
+            self.view.run_command("text_transmute_parse", {"user_input": history[selected_index]})
+
+        sublime.active_window().show_quick_panel(history, on_done)
+
+
 # Helpers
 
 def get_current_input():
@@ -223,6 +238,28 @@ def reset_current_input():
     f = open('%s/%s/%s' % (sublime.packages_path(),
                            "text-transmute",
                            "Data.sublime-project"), 'w')
+    f.write("")
+    f.close()
+
+def get_history():
+    f = open('%s/%s/%s' % (sublime.packages_path(),
+                           "text-transmute",
+                           "History.sublime-project"), 'r')
+    content = f.readlines()
+    f.close()
+    return [x.strip() for x in content]
+
+def append_to_history(text):
+    f = open('%s/%s/%s' % (sublime.packages_path(),
+                           "text-transmute",
+                           "History.sublime-project"), 'a')
+    f.write("\n" + text)
+    f.close()
+
+def reset_history():
+    f = open('%s/%s/%s' % (sublime.packages_path(),
+                           "text-transmute",
+                           "History.sublime-project"), 'w')
     f.write("")
     f.close()
 

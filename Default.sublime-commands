@@ -8,6 +8,10 @@
     "command": "text_transmute_alias"
   },
   {
+    "caption": "Text Transmute: History",
+    "command": "text_transmute_history"
+  },
+  {
     "caption": "Text Transmute: Edit/Add Aliases",
     "command": "text_transmute_edit_alias"
   },
