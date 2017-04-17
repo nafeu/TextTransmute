@@ -57,7 +57,7 @@ except ValueError:
 class Foo(Transmutation):
 
     def transmute(self, body=None, params=None):
-        return "Bar"
+        return "bar"
 
 #  5. Define a test for your command
 
@@ -67,8 +67,9 @@ class TestFoo(unittest.TestCase):
         self.t = Foo()
 
     def test_default(self):
-        self.assertEqual(self.t.transmute(), "Bar")
-        self.assertEqual(self.t.transmute("Foo"), "Bar")
+        self.assertEqual(self.t.transmute(), "bar")
+        self.assertEqual(self.t.transmute("Foo"), "bar")
+        self.assertEqual(self.t.transmute("foo"), "bar")
 
 #  6. Run the test using 'python Packages/TextTransmute/runtests.py'
 
