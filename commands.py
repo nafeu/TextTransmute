@@ -4,7 +4,7 @@ import ast
 import operator as op
 
 class Transmutation(object):
-
+    """Transmutation desc"""
     def __init__(self, error_module=None):
         self.body = None
         self.error_module = error_module
@@ -59,7 +59,7 @@ class TestTransmutation(unittest.TestCase):
 
 
 class Expr(Transmutation):
-
+    """Expr desc"""
     def transmute(self, body, params=None):
         try:
             return eval_expr(body)

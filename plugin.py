@@ -25,25 +25,17 @@
 import sublime
 import sublime_plugin
 import re
+import inspect
 from .commands import *
 from .custom import *
 from .alias import *
 
-BUILT_IN_COMMANDS = [str(t).replace("<class 'text-transmute.commands.", "")
-                     .replace("'>", "")
-                     .lower()
-                     for t in globals().values()
-                     if ('text-transmute.commands.' in str(t)
-                         and 'Test' not in str(t))]
-
-CUSTOM_COMMANDS = [str(t).replace("<class 'text-transmute.custom.", "")
-                   .replace("'>", "")
-                   .lower()
-                   for t in globals().values()
-                   if ('text-transmute.custom.' in str(t)
-                       and 'Test' not in str(t))]
-
-AVAILABLE_COMMANDS = ["..."] + BUILT_IN_COMMANDS + CUSTOM_COMMANDS
+AVAILABLE_COMMANDS = [["...", "New Blank Transmutation"]] + \
+                      [[t.__name__.lower(), inspect.getdoc(t)]
+                      for t in globals().values()
+                      if (('text-transmute.commands' in str(t)
+                      or 'text-transmute.custom' in str(t))
+                      and 'test' not in str(t).lower())]
 
 # Sublime Text Plugin Commands
 
@@ -153,7 +145,7 @@ class TextTransmuteInitCommand(sublime_plugin.TextCommand):
             elif selected_index > 0:
                 if len(current_input) > 1:
                     pipe = " | "
-                updated_input = current_input + pipe + AVAILABLE_COMMANDS[selected_index]
+                updated_input = current_input + pipe + AVAILABLE_COMMANDS[selected_index][0]
                 sublime.active_window().show_input_panel("Transmute Selection",
                                                          updated_input,
                                                          on_done,

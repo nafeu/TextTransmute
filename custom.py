@@ -55,7 +55,7 @@ except ValueError:
 '''
 
 class Foo(Transmutation):
-
+    """Foo desc"""
     def transmute(self, body=None, params=None):
         return "bar"
 
@@ -76,7 +76,7 @@ class TestFoo(unittest.TestCase):
 #  7. Check out the following example commands
 
 class Rev(Transmutation):
-
+    """Rev desc"""
     def transmute(self, body=None, params=None):
         return body[::-1]
 
@@ -91,7 +91,7 @@ class TestRev(unittest.TestCase):
         self.assertEqual(self.t.transmute("abc"), "cba")
 
 class Leet(Transmutation):
-
+    """Leet desc"""
     def transmute(self, body=None, params=None):
         return (body.lower()
                 .replace("e", "3").replace("E", "3")
