@@ -8,20 +8,16 @@
         "children":
         [
           {
+            "caption": "Perform Transmutation",
+            "command": "text_transmute_init"
+          },
+          {
             "caption": "Use Alias",
             "command": "text_transmute_alias"
           },
           {
-            "caption": "Perform Raw Transmutation",
-            "command": "text_transmute_init"
-          },
-          {
             "caption": "Edit Aliases",
             "command": "text_transmute_edit_alias"
-          },
-          {
-            "caption": "List Available Commands",
-            "command": "text_transmute_list"
           },
           {
             "caption": "Edit Key Bindings",

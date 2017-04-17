@@ -54,23 +54,6 @@ AVAILABLE_COMMANDS = ["..."] + BUILT_IN_COMMANDS + CUSTOM_COMMANDS
 
 # Sublime Text Plugin Commands
 
-class TextTransmuteInitCommand(sublime_plugin.TextCommand):
-    """
-    TODO: Add docstring...
-    """
-    def run(self, edit):
-
-        def on_done(text):
-            self.view.run_command("text_transmute_parse",
-                                  {"user_input": text})
-
-        sublime.active_window().show_input_panel("Transmute Selection",
-                                                 "",
-                                                 on_done,
-                                                 None,
-                                                 None)
-
-
 class TextTransmuteParseCommand(sublime_plugin.TextCommand):
     """
     TODO: Add docstring...
@@ -146,7 +129,7 @@ class TextTransmuteExecCommand(sublime_plugin.TextCommand):
         self.view.replace(edit, sublime.Region(region_begin, region_end), string)
 
 
-class TextTransmuteListCommand(sublime_plugin.TextCommand):
+class TextTransmuteInitCommand(sublime_plugin.TextCommand):
     """
     TODO: Add docstring...
     """

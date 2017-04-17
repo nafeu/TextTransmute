@@ -1,7 +1,7 @@
 [
 {
     "keys": ["ctrl+shift+j"],
-    "command": "text_transmute_list"
+    "command": "text_transmute_init"
 },
 {
     "keys": ["ctrl+shift+h"],
