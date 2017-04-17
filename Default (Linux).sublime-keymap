@@ -1,0 +1,10 @@
+[
+{
+    "keys": ["ctrl+k", "j"],
+    "command": "text_transmute_init"
+},
+{
+    "keys": ["ctrl+k", "h"],
+    "command": "text_transmute_alias"
+},
+]
