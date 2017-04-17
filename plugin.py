@@ -31,7 +31,7 @@ from .alias import *
 
 PACKAGES_PATH = sublime.packages_path()
 PLUGIN_PATH = PACKAGES_PATH + "/text-transmute"
-PLATFORM = sublime.platform()
+PLATFORM = format_platform(sublime.platform())
 KEYMAP_PATH = '%s/Default (%s).sublime-keymap' % (PLUGIN_PATH, PLATFORM)
 CUSTOM_COMMANDS_PATH = '%s/custom.py' % (PLUGIN_PATH)
 ALIAS_PATH = '%s/alias.py' % (PLUGIN_PATH)
@@ -222,6 +222,12 @@ def reset_current_input():
     f = open(sublime.packages_path() + "/text-transmute/Data.sublime-project", 'w')
     f.write("")
     f.close()
+
+def format_platform(platform):
+    if platform == "linux" or platform == "windows":
+        return platform.capitalize()
+    else:
+        return platform.upper()
 
 
 # Exception Handling
