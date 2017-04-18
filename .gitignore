@@ -8,3 +8,4 @@ tests/*.pyc
 *.pyc
 sandbox.py
 *.swp
+History.sublime-project

@@ -30,6 +30,7 @@ from .commands import *
 from .custom import *
 from .alias import *
 
+HISTORY_LIMIT = 24
 AVAILABLE_COMMANDS = [["...", "New Blank Transmutation"]] + \
                       [[t.__name__.lower(), inspect.getdoc(t)]
                       for t in globals().values()
@@ -44,6 +45,8 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
     TODO: Add docstring...
     """
     def run(self, edit, user_input):
+
+        create_history_if_unavailable()
 
         success = True
         append_to_sel = False
@@ -97,6 +100,7 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
                         error_logger.display_error("Transmutation Error: '" + str(e) + "'")
                         break
                 else:
+                    success = False
                     error_logger.display_error("Transmutation Error: '" + command + "' is not a valid command")
                     raise InvalidTransmutation(command)
                 if append_to_sel:
@@ -107,7 +111,7 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
                                                                                       "string" : body})
         if success:
             append_to_history(user_input)
-        reset_current_input()
+            reset_current_input()
 
 class TextTransmuteExecCommand(sublime_plugin.TextCommand):
     """
@@ -205,10 +209,23 @@ class TextTransmuteHistory(sublime_plugin.TextCommand):
 
         history = get_history()
 
-        def on_done(selected_index):
-            self.view.run_command("text_transmute_parse", {"user_input": history[selected_index]})
+        def on_done(text):
+            self.view.run_command("text_transmute_parse", {"user_input": text})
 
-        sublime.active_window().show_quick_panel(history, on_done)
+        def on_change(text):
+            set_current_input(text)
+
+        def on_cancel():
+            reset_current_input()
+
+        def on_select(selected_index):
+            sublime.active_window().show_input_panel("Transmute Selection",
+                                                   history[selected_index],
+                                                   on_done,
+                                                   on_change,
+                                                   on_cancel)
+
+        sublime.active_window().show_quick_panel(history, on_select)
 
 
 # Helpers
@@ -235,11 +252,11 @@ def set_current_input(text):
     f.close()
 
 def reset_current_input():
-    f = open('%s/%s/%s' % (sublime.packages_path(),
-                           "TextTransmute",
-                           "Data.sublime-project"), 'w')
-    f.write("")
-    f.close()
+    file_name = '%s/%s/%s' % (sublime.packages_path(),
+                              "TextTransmute",
+                              "Data.sublime-project")
+    with open(file_name, "w"):
+        pass
 
 def get_history():
     f = open('%s/%s/%s' % (sublime.packages_path(),
@@ -250,11 +267,18 @@ def get_history():
     return [x.strip() for x in content]
 
 def append_to_history(text):
-    f = open('%s/%s/%s' % (sublime.packages_path(),
-                           "TextTransmute",
-                           "History.sublime-project"), 'a')
-    f.write("\n" + text)
-    f.close()
+    file_name = '%s/%s/%s' % (sublime.packages_path(),
+                              "TextTransmute",
+                              "History.sublime-project")
+    with open(file_name, 'r') as fin:
+        data = fin.read().splitlines(True)
+    with open(file_name, 'w') as fout:
+        if len(data) > HISTORY_LIMIT:
+            fout.writelines(data[1:] + ["\n" + text])
+        elif len(data) < 1:
+            fout.writelines([text])
+        else:
+            fout.writelines(data + ["\n" + text])
 
 def reset_history():
     f = open('%s/%s/%s' % (sublime.packages_path(),
@@ -268,6 +292,15 @@ def format_platform(platform):
         return platform.capitalize()
     else:
         return platform.upper()
+
+def create_history_if_unavailable():
+    file_name = '%s/%s/%s' % (sublime.packages_path(),
+                              "TextTransmute",
+                              "History.sublime-project")
+    try:
+        file = open(file_name, 'r')
+    except FileNotFoundError:
+        file = open(file_name, 'w')
 
 # Exception Handling
 

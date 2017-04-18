@@ -111,7 +111,7 @@ class TestLeet(unittest.TestCase):
 
 '''
 Please feel free to contribute your best custom commands to the plugin!
-github.com/nafeu/text-transmute
+github.com/nafeu/TextTransmute
 
 Add your custom commands below...
 '''
