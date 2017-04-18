@@ -9,3 +9,4 @@ tests/*.pyc
 sandbox.py
 *.swp
 History.sublime-project
+Data.sublime-project
