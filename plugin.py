@@ -46,7 +46,7 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
     """
     def run(self, edit, user_input):
 
-        create_history_if_unavailable()
+        generate_data_files()
 
         success = True
         append_to_sel = False
@@ -293,14 +293,21 @@ def format_platform(platform):
     else:
         return platform.upper()
 
-def create_history_if_unavailable():
-    file_name = '%s/%s/%s' % (sublime.packages_path(),
-                              "TextTransmute",
-                              "History.sublime-project")
+def generate_data_files():
+    data_file_name = '%s/%s/%s' % (sublime.packages_path(),
+                                   "TextTransmute",
+                                   "Data.sublime-project")
+    hist_file_name = '%s/%s/%s' % (sublime.packages_path(),
+                                   "TextTransmute",
+                                   "History.sublime-project")
     try:
-        file = open(file_name, 'r')
+        file = open(data_file_name, 'r')
     except FileNotFoundError:
-        file = open(file_name, 'w')
+        file = open(data_file_name, 'w')
+    try:
+        file = open(hist_file_name, 'r')
+    except FileNotFoundError:
+        file = open(hist_file_name, 'w')
 
 # Exception Handling
 

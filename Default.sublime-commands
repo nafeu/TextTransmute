@@ -1,26 +1,26 @@
 [
   {
-    "caption": "Text Transmute: Perform Transmutation",
+    "caption": "TextTransmute: Perform Transmutation",
     "command": "text_transmute_init"
   },
   {
-    "caption": "Text Transmute: Use Alias",
+    "caption": "TextTransmute: Use Alias",
     "command": "text_transmute_alias"
   },
   {
-    "caption": "Text Transmute: History",
+    "caption": "TextTransmute: History",
     "command": "text_transmute_history"
   },
   {
-    "caption": "Text Transmute: Edit/Add Aliases",
+    "caption": "TextTransmute: Edit/Add Aliases",
     "command": "text_transmute_edit_alias"
   },
   {
-    "caption": "Text Transmute: Edit Key Bindings",
+    "caption": "TextTransmute: Edit Key Bindings",
     "command": "text_transmute_edit_key_binds"
   },
   {
-    "caption": "Text Transmute: Edit/Add Custom Commands",
+    "caption": "TextTransmute: Edit/Add Custom Commands",
     "command": "text_transmute_add_custom_commands"
   },
 ]
