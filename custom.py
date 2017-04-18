@@ -9,7 +9,7 @@ except ImportError:
 # Import Transmutation for test runner
 try:
     from .commands import Transmutation
-except ValueError:
+except (ValueError, SystemError):
     pass
 
 '''
