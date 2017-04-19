@@ -55,13 +55,16 @@ except (ValueError, SystemError):
 '''
 
 class Foo(Transmutation):
-    """Foo desc"""
+    """Convert selected text to 'bar'"""
+
     def transmute(self, body=None, params=None):
         return "bar"
+
 
 #  5. Define a test for your command
 
 class TestFoo(unittest.TestCase):
+    """Unit test for Foo command"""
 
     def setUp(self):
         self.t = Foo()
@@ -71,16 +74,20 @@ class TestFoo(unittest.TestCase):
         self.assertEqual(self.t.transmute("Foo"), "bar")
         self.assertEqual(self.t.transmute("foo"), "bar")
 
+
 #  6. Run the test using 'python Packages/TextTransmute/runtests.py'
 
 #  7. Check out the following example commands
 
 class Rev(Transmutation):
-    """Rev desc"""
+    """Reverse selected text: 'bad' -> 'dab'"""
+
     def transmute(self, body=None, params=None):
         return body[::-1]
 
+
 class TestRev(unittest.TestCase):
+    """Unit test for Rev command"""
 
     def setUp(self):
         self.t = Rev()
@@ -90,8 +97,10 @@ class TestRev(unittest.TestCase):
         self.assertEqual(self.t.transmute("ab"), "ba")
         self.assertEqual(self.t.transmute("abc"), "cba")
 
+
 class Leet(Transmutation):
-    """Leet desc"""
+    """Convert selected text into l33t 5p34k"""
+
     def transmute(self, body=None, params=None):
         return (body.lower()
                 .replace("e", "3").replace("E", "3")
@@ -100,7 +109,9 @@ class Leet(Transmutation):
                 .replace("o", "0").replace("O", "0")
                 .replace("s", "5").replace("S", "5"))
 
+
 class TestLeet(unittest.TestCase):
+    """Unit test for Leet command"""
 
     def setUp(self):
         self.t = Leet()

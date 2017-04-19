@@ -10,7 +10,7 @@
    | |  |  _ <  / ___ \ | |\  | ___) || |  | || |_| |  | |  | |___
    |_|  |_| \_\/_/   \_\|_| \_||____/ |_|  |_| \___/   |_|  |_____|
 
-  An experimental sublime text plugin that allows you to mutate selected
+  An experimental Sublime Text 3 plugin that allows you to mutate selected
   text in a style inspired by VIM, Emacs macros and shell programming tools.
 
   PRs, Questions, Issues -> @nafeu (github.com/nafeu)
@@ -41,35 +41,36 @@ AVAILABLE_COMMANDS = [["...", "New Blank Transmutation"]] + \
 # Sublime Text Plugin Commands
 
 class TextTransmuteParseCommand(sublime_plugin.TextCommand):
-    """
-    TODO: Add docstring...
-    """
+    """ST3 plugin class for parsing user input before transmutation"""
+
     def run(self, edit, user_input):
 
         generate_data_files()
 
         success = True
         append_to_sel = False
-        region_set = sublime.active_window().active_view().sel()
-
-        error_logger = WindowErrorLogger()
-
+        active_view = sublime.active_window().active_view()
+        region_set = active_view.sel()
+        err_log = WindowErrorLogger()
         ws_pattern = re.compile(r'''((?:[^\s"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
         pipe_pattern = re.compile(r'''((?:[^|"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
 
         def strip_quotes(input_string):
+            """Strip quotes from input string"""
             if ((input_string[0] == input_string[len(input_string)-1])
                     and (input_string[0] in ('"', "'"))):
                 return input_string[1:-1]
             return input_string
 
         def eval_simple_expr(input_string):
+            """Evaluate simple expression in input string"""
             if ((input_string[0] == input_string[len(input_string)-1])
                     and (input_string[0] in '`')):
                 return eval_expr(input_string[1:-1])
             return input_string
 
         def clean_param(param):
+            """Strip quotes and evaluate any embedded expressions in param"""
             return str(eval_simple_expr(strip_quotes(param)))
 
         if user_input[0] == "+":
@@ -78,12 +79,14 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
         else:
             to_parse = user_input
 
-        command_list = [x.strip() for x in pipe_pattern.split(to_parse)[1::2]]
+        command_list = [c.strip() for c in pipe_pattern.split(to_parse)[1::2]]
+
         for region in region_set:
 
-            body = sublime.active_window().active_view().substr(region)
+            body = active_view.substr(region)
 
             for command in command_list:
+
                 params = None
                 # split incoming input into a list by delimiter whitespace
                 input_split = [clean_param(x)
@@ -93,38 +96,44 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
                     params = input_split[1:]
                 if command_name.capitalize() in globals():
                     try:
-                        transmutor = globals()[command_name.capitalize()](error_logger)
-                        body = str(transmutor.transmute(body, params))
+                        t = globals()[command_name.capitalize()](err_log)
+                        body = str(t.transmute(body, params))
                     except Exception as e:
                         success = False
-                        error_logger.display_error("Transmutation Error: '" + str(e) + "'")
+                        err_log.display_err("Transmute Error: '%s'" % (str(e)))
                         break
                 else:
                     success = False
-                    error_logger.display_error("Transmutation Error: '" + command + "' is not a valid command")
+                    err_log.display_err("%s: '%s' %s" % ("Transmute Error",
+                                                         command,
+                                                         "is not a command."))
                     raise InvalidTransmutation(command)
                 if append_to_sel:
-                    body = sublime.active_window().active_view().substr(region)+'\n\n'+body
+                    body = active_view.substr(region)+'\n\n'+body
 
-            sublime.active_window().active_view().run_command("text_transmute_exec", {"region_begin" : region.begin(),
-                                                                                      "region_end" : region.end(),
-                                                                                      "string" : body})
+            transmutation_inputs = {"region_begin" : region.begin(),
+                                    "region_end" : region.end(),
+                                    "string" : body}
+
+            active_view.run_command("text_transmute_exec",
+                                    transmutation_inputs)
+
         if success:
             append_to_history(user_input)
             reset_current_input()
 
 class TextTransmuteExecCommand(sublime_plugin.TextCommand):
-    """
-    TODO: Add docstring...
-    """
+    """ST3 plugin class for replacing selected area with its mutation"""
+
     def run(self, edit, region_begin, region_end, string):
-        self.view.replace(edit, sublime.Region(region_begin, region_end), string)
+        self.view.replace(edit,
+                          sublime.Region(region_begin, region_end),
+                          string)
 
 
 class TextTransmuteInitCommand(sublime_plugin.TextCommand):
-    """
-    TODO: Add docstring...
-    """
+    """ST3 plugin class for replacing selected area with its mutation"""
+
     def run(self, edit):
 
         def on_done(text):
@@ -152,7 +161,9 @@ class TextTransmuteInitCommand(sublime_plugin.TextCommand):
             elif selected_index > 0:
                 if len(current_input) > 1:
                     pipe = " | "
-                updated_input = current_input + pipe + AVAILABLE_COMMANDS[selected_index][0]
+                updated_input = (current_input +
+                                 pipe +
+                                 AVAILABLE_COMMANDS[selected_index][0])
                 sublime.active_window().show_input_panel("Transmute Selection",
                                                          updated_input,
                                                          on_done,
@@ -163,19 +174,23 @@ class TextTransmuteInitCommand(sublime_plugin.TextCommand):
             else:
                 pass
 
-
         sublime.active_window().show_quick_panel(AVAILABLE_COMMANDS, on_select)
 
+
 class TextTransmuteEditKeyBinds(sublime_plugin.TextCommand):
+    """ST3 plugin class for editing key binds"""
 
     def run(self, edit):
+        formatted_platform = format_platform(sublime.platform())
         keymap_path = '%s/%s/Default (%s)%s' % (sublime.packages_path(),
                                                 "TextTransmute",
-                                                format_platform(sublime.platform()),
+                                                formatted_platform,
                                                 ".sublime-keymap")
         sublime.active_window().open_file(keymap_path)
 
+
 class TextTransmuteAddCustomCommands(sublime_plugin.TextCommand):
+    """ST3 plugin class for adding custom commands"""
 
     def run(self, edit):
         custom_commands_path = '%s/%s/%s' % (sublime.packages_path(),
@@ -183,7 +198,9 @@ class TextTransmuteAddCustomCommands(sublime_plugin.TextCommand):
                                              "custom.py")
         sublime.active_window().open_file(custom_commands_path)
 
+
 class TextTransmuteEditAlias(sublime_plugin.TextCommand):
+    """ST3 plugin class for adding and editing aliases"""
 
     def run(self, edit):
         alias_path = '%s/%s/%s' % (sublime.packages_path(),
@@ -191,7 +208,9 @@ class TextTransmuteEditAlias(sublime_plugin.TextCommand):
                                    "alias.py")
         sublime.active_window().open_file(alias_path)
 
+
 class TextTransmuteAlias(sublime_plugin.TextCommand):
+    """ST3 plugin class for using aliased transmutation scripts"""
 
     def run(self, edit):
 
@@ -203,7 +222,9 @@ class TextTransmuteAlias(sublime_plugin.TextCommand):
 
         sublime.active_window().show_quick_panel(ALIASES, on_done)
 
+
 class TextTransmuteHistory(sublime_plugin.TextCommand):
+    """ST3 plugin class for accessing command usage history"""
 
     def run(self, edit):
 
@@ -231,6 +252,8 @@ class TextTransmuteHistory(sublime_plugin.TextCommand):
 # Helpers
 
 def get_current_input():
+    """Get current input value from Data.sublime-project"""
+
     try:
         f = open('%s/%s/%s' % (sublime.packages_path(),
                                "TextTransmute",
@@ -244,21 +267,30 @@ def get_current_input():
         f.close()
         return ""
 
+
 def set_current_input(text):
+    """Set current input value in Data.sublime-project"""
+
     f = open('%s/%s/%s' % (sublime.packages_path(),
                            "TextTransmute",
                            "Data.sublime-project"), 'w')
     f.write(text)
     f.close()
 
+
 def reset_current_input():
+    """Reset current input value in Data.sublime-project"""
+
     file_name = '%s/%s/%s' % (sublime.packages_path(),
                               "TextTransmute",
                               "Data.sublime-project")
     with open(file_name, "w"):
         pass
 
+
 def get_history():
+    """Get command usage history from History.sublime-project"""
+
     f = open('%s/%s/%s' % (sublime.packages_path(),
                            "TextTransmute",
                            "History.sublime-project"), 'r')
@@ -266,7 +298,10 @@ def get_history():
     f.close()
     return [x.strip() for x in content]
 
+
 def append_to_history(text):
+    """Append to command usage history in History.sublime-project"""
+
     file_name = '%s/%s/%s' % (sublime.packages_path(),
                               "TextTransmute",
                               "History.sublime-project")
@@ -280,20 +315,29 @@ def append_to_history(text):
         else:
             fout.writelines(data + ["\n" + text])
 
+
 def reset_history():
+    """Reset command usage history in History.sublime-project"""
+
     f = open('%s/%s/%s' % (sublime.packages_path(),
                            "TextTransmute",
                            "History.sublime-project"), 'w')
     f.write("")
     f.close()
 
+
 def format_platform(platform):
+    """Return formatted uppercase or capitalized platform value"""
+
     if platform == "linux" or platform == "windows":
         return platform.capitalize()
     else:
         return platform.upper()
 
+
 def generate_data_files():
+    """Generate data files for use by plugin"""
+
     data_file_name = '%s/%s/%s' % (sublime.packages_path(),
                                    "TextTransmute",
                                    "Data.sublime-project")
@@ -309,16 +353,18 @@ def generate_data_files():
     except FileNotFoundError:
         file = open(hist_file_name, 'w')
 
+
 # Exception Handling
 
 class WindowErrorLogger(object):
-    """
-    TODO: Add docstring...
-    """
-    def display_error(self, message):
+    """Display error message in sublime window"""
+
+    def display_err(self, message):
         sublime.error_message(message)
 
+
 class InvalidTransmutation(Exception):
+    """Exception describing invalid transmutation"""
 
     def __init__(self, value):
         self.value = value

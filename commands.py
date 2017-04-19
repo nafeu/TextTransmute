@@ -4,15 +4,16 @@ import ast
 import operator as op
 
 class Transmutation(object):
-    """Transmutation desc"""
+    """Base transmutation example"""
+
     def __init__(self, error_module=None):
         self.body = None
         self.error_module = error_module
         self.command = self.__class__.__name__.lower()
 
-    def display_error(self, message):
+    def display_err(self, message):
         if self.error_module:
-            self.error_module.display_error(message)
+            self.error_module.display_err(message)
         else:
             print(message)
 
@@ -31,7 +32,9 @@ class Transmutation(object):
             opts, args = getopt.getopt(params, 'lws:')
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
-            self.display_error("Transmutation Error: " + str(err) + " for " + self.command)
+            self.display_err("%s: %s for %s" % ("Transmutation Error:",
+                                                str(err),
+                                                self.command))
             return self.body
 
         # Option Handling
@@ -46,7 +49,9 @@ class Transmutation(object):
         # default
         return default()
 
+
 class TestTransmutation(unittest.TestCase):
+    """Unit test for Transmutation command"""
 
     def setUp(self):
         self.t = Transmutation()
@@ -59,7 +64,8 @@ class TestTransmutation(unittest.TestCase):
 
 
 class Expr(Transmutation):
-    """Expr desc"""
+    """Evaluate simple expressions: '3 + 3' -> 6, '3 * 3' -> 9"""
+
     def transmute(self, body, params=None):
         try:
             return eval_expr(body)
@@ -69,6 +75,7 @@ class Expr(Transmutation):
 
 
 class TestExpr(unittest.TestCase):
+    """Unit test for Expr command"""
 
     # TODO: Improve tests...
     def setUp(self):
@@ -78,6 +85,7 @@ class TestExpr(unittest.TestCase):
         self.assertEqual(self.t.transmute("2 + 2"), 4)
         self.assertEqual(self.t.transmute("2 * 2"), 4)
         self.assertEqual(self.t.transmute("2 + (2 * 2)"), 6)
+
 
 # Helpers
 
