@@ -103,11 +103,12 @@ class Leet(Transmutation):
 
     def transmute(self, body=None, params=None):
         return (body.lower()
-                .replace("e", "3").replace("E", "3")
-                .replace("l", "1").replace("L", "1")
-                .replace("t", "7").replace("T", "7")
-                .replace("o", "0").replace("O", "0")
-                .replace("s", "5").replace("S", "5"))
+                .replace("e", "3")
+                .replace("l", "1")
+                .replace("t", "7")
+                .replace("o", "0")
+                .replace("a", "4")
+                .replace("s", "5"))
 
 
 class TestLeet(unittest.TestCase):
