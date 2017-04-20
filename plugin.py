@@ -153,7 +153,7 @@ class TextTransmuteInitCommand(sublime_plugin.TextCommand):
 
             if selected_index == 0:
                 sublime.active_window().show_input_panel("Transmute Selection",
-                                                         current_input,
+                                                         current_input + " ",
                                                          on_done,
                                                          on_change,
                                                          on_cancel)
@@ -165,7 +165,7 @@ class TextTransmuteInitCommand(sublime_plugin.TextCommand):
                                  pipe +
                                  AVAILABLE_COMMANDS[selected_index][0])
                 sublime.active_window().show_input_panel("Transmute Selection",
-                                                         updated_input,
+                                                         updated_input + " ",
                                                          on_done,
                                                          on_change,
                                                          on_cancel)
