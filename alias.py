@@ -1,6 +1,7 @@
 ALIASES = [
 
   ["Convert to leet speak and reverse", "leet | rev"],
-  ["Evaluate this expression", "expr"]
+  ["Evaluate this expression", "expr"],
+  # ["Description", "Command sequence"],
 
 ]
