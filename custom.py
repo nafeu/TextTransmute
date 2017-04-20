@@ -80,7 +80,7 @@ class TestFoo(unittest.TestCase):
 #  7. Check out the following example commands
 
 class Rev(Transmutation):
-    """Reverse selected text: 'bad' -> 'dab'"""
+    """Reverse selected text"""
 
     def transmute(self, body=None, params=None):
         return body[::-1]

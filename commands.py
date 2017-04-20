@@ -74,7 +74,7 @@ class TestTransmutation(unittest.TestCase):
 
 
 class Expr(Transmutation):
-    """Evaluate simple expressions: '3 + 3' -> 6, '3 * 3' -> 9"""
+    """Evaluate simple expressions"""
 
     def transmute(self, body=None, params=None):
         try:
