@@ -97,6 +97,135 @@ class TestExpr(unittest.TestCase):
         self.assertEqual(self.t.transmute("2 + (2 * 2)"), 6)
 
 
+class Swap(Transmutation):
+    """Replace matched substrings inside a selection"""
+
+    def transmute(self, body=None, params=None):
+
+        # Mutation Case Algorithms
+        def default():
+            return body.replace(old_string, new_string)
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(params, '')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.display_err("%s: %s for %s" % ("Transmutation Error:",
+                                                str(err),
+                                                self.command))
+            return body
+
+        # Arg Handling
+        if len(args) > 1:
+            old_string = args[0]
+            new_string = args[1]
+        else:
+            self.display_err("'%s' %s: %s" % (self.command,
+                                              "requires arguments",
+                                              "[old string] [new string]"))
+
+        return default()
+
+
+class TestSwap(unittest.TestCase):
+    """Unit test for Swap command"""
+
+    # TODO: Improve tests...
+    def setUp(self):
+        self.t = Swap()
+
+    def test_default(self):
+        self.assertEqual(self.t.transmute("a", ["a", "x"]), "x")
+        self.assertEqual(self.t.transmute("abc", ["b", "d"]), "adc")
+
+class Gen(Transmutation):
+    """Generate incrementing lists"""
+
+    def transmute(self, body=None, params=None):
+
+        self.body = body
+        self.params = params
+
+        # Helpers
+        def place(s, placement):
+            return str(placement.replace('{$}', str(s)))
+
+        # Option status
+        placement = '{$}'
+        range_start = 0
+        range_end = 0
+        range_increment = 1
+        seperator = '\n'
+        alphabet = False
+
+        # Mutation Case Algorithms
+        def default():
+            if alphabet:
+                return seperator.join(place(chr(i), placement)
+                       for i in range(range_start, range_end, range_increment))
+            return seperator.join(place(i, placement)
+                   for i in range(range_start, range_end, range_increment))
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(self.params, 'cs:')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.display_err("%s: %s for %s" % ("Transmutation Error:",
+                                                str(err),
+                                                self.command))
+            return self.body
+
+        # Option Handling
+        for o, a in opts:
+            if o == "-c":
+                seperator = ''
+            elif o == "-s":
+                placement = a
+                if placement.find('{$}') == -1:
+                    placement = a + '{$}'
+
+        # Arg Handling
+        if len(args) >= 2:
+            try:
+                range_start = int(args[0])
+                range_end = int(args[1]) + 1
+            except ValueError:
+                range_start = ord(args[0])
+                range_end = ord(args[1]) + 1
+                alphabet = True
+            try:
+                range_increment = int(args[2])
+            except IndexError:
+                pass
+            if range_start > range_end:
+                range_increment *= -1
+                range_end -= 2
+        else:
+            self.display_err("'%s' %s: %s" % (self.command,
+                                              "requires arguments",
+                                              "[start] [end]"))
+
+        # default
+        return default()
+
+
+class TestGen(unittest.TestCase):
+    """Unit test for Swap command"""
+
+    # TODO: Improve tests...
+    def setUp(self):
+        self.t = Gen()
+
+    def test_default(self):
+        self.assertEqual(self.t.transmute("", ["1", "5"]), "1\n2\n3\n4\n5")
+        self.assertEqual(self.t.transmute("", ["a", "d"]), "a\nb\nc\nd")
+        self.assertEqual(self.t.transmute("", ["-c", "1", "5"]), "12345")
+        self.assertEqual(self.t.transmute("", ["-s", "{$}.", "1", "3"]),
+                                          "1.\n2.\n3.")
+
+
 # Helpers
 
 OPERATORS = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
