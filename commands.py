@@ -2,9 +2,10 @@ import getopt
 import unittest
 import ast
 import operator as op
+import textwrap
 
 class Transmutation(object):
-    """Base transmutation example"""
+    """Transmutation example and help"""
 
     def __init__(self, error_module=None):
         self.body = None
@@ -17,19 +18,27 @@ class Transmutation(object):
         else:
             print(message)
 
-    def transmute(self, body, params=None):
+    def transmute(self, body=None, params=None):
         self.body = body
 
         # Mutation Case Algorithms
         def default():
-            return self.body
+            desc = ('This plugin allows you to mutate, insert or generate '
+                    'selected text using bash-inspired commands.')
+            return self.body + "\n\n" + desc
 
-        def other_case():
-            return self.body + self.body
+        def usage():
+            return self.body + "\n\n" + "Usage: command -o --option 'args'"
+
+        def version():
+            return self.body + ("\n\n%s - %s" % ("TextTransmute v1.0.0",
+                                                 "github.com/nafeu"))
 
         # Option Parsing
         try:
-            opts, args = getopt.getopt(params, 'lws:')
+            opts, args = getopt.getopt(params,
+                                       'hv',
+                                       ["help", "version"])
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
             self.display_err("%s: %s for %s" % ("Transmutation Error:",
@@ -39,8 +48,10 @@ class Transmutation(object):
 
         # Option Handling
         for o, a in opts:
-            if o == "-l":
-                return other_case()
+            if o in ("-v", "--version"):
+                return version()
+            elif o in ("-h", "--help"):
+                return usage()
 
         # Arg Handling
         if args:
@@ -57,16 +68,15 @@ class TestTransmutation(unittest.TestCase):
         self.t = Transmutation()
 
     def test_default(self):
-        self.assertEqual(self.t.transmute("asdf"), "asdf")
-
-    def test_other_case(self):
-        self.assertEqual(self.t.transmute("asdf", ['-l']), "asdfasdf")
+        desc = ('This plugin allows you to mutate, insert or generate '
+                'selected text using bash-inspired commands.')
+        self.assertEqual(self.t.transmute(''), "\n\n" + desc)
 
 
 class Expr(Transmutation):
     """Evaluate simple expressions: '3 + 3' -> 6, '3 * 3' -> 9"""
 
-    def transmute(self, body, params=None):
+    def transmute(self, body=None, params=None):
         try:
             return eval_expr(body)
         except Exception:
