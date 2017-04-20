@@ -226,6 +226,94 @@ class TestGen(unittest.TestCase):
                                           "1.\n2.\n3.")
 
 
+class Dupl(Transmutation):
+    """Duplicate selection n times"""
+
+    def transmute(self, body=None, params=None):
+
+        # Option status
+        newline = '\n'
+        multiplier = 2
+
+        # Mutation Case Algorithms
+        def default():
+            return ((body + newline) * int(multiplier))
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(params, 's')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.display_err("%s: %s for %s" % ("Transmutation Error:",
+                                                str(err),
+                                                self.command))
+            return self.body
+
+        # Option Handling
+        for o, a in opts:
+            if o == "-s":
+                newline = ''
+
+        # Arg Handling
+        if args:
+            multiplier = args[0]
+
+        # default
+        return default()
+
+
+class TestDupl(unittest.TestCase):
+    """Unit test for Dupl command"""
+
+    # TODO: Improve tests...
+    def setUp(self):
+        self.t = Dupl()
+
+    def test_default(self):
+        self.assertEqual(self.t.transmute("a"), "a\na\n")
+        self.assertEqual(self.t.transmute("a", ["-s"]), "aa")
+
+
+class Strip(Transmutation):
+    """Strip a matched pattern out of selection"""
+
+    def transmute(self, body=None, params=None):
+
+        # Mutation Case Algorithms
+        def default():
+            output = ''
+            for line in body.split("\n"):
+                output += (line.replace(pattern, "") + "\n")
+            return output
+
+        try:
+            opts, args = getopt.getopt(params, '')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.display_err("%s: %s for %s" % ("Transmutation Error:",
+                                                str(err),
+                                                self.command))
+            return body
+
+        # Arg Handling
+        if args:
+            pattern = args[0]
+
+        # default
+        return default()
+
+
+class TestStrip(unittest.TestCase):
+    """Unit test for Dupl command"""
+
+    # TODO: Improve tests...
+    def setUp(self):
+        self.t = Strip()
+
+    def test_default(self):
+        self.assertEqual(self.t.transmute("a"), "a\na\n")
+
+
 # Helpers
 
 OPERATORS = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
