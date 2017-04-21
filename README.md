@@ -1,8 +1,11 @@
+
 # Text Transmute
 
 An experimental [Sublime Text](https://www.sublimetext.com/) plugin that allows you to mutate selected text in a style inspired by VIM, Emacs and unix shell programming tools.
 
-#### Features
+[![Build Status](https://travis-ci.org/nafeu/TextTransmute.svg?branch=master)](https://travis-ci.org/nafeu/TextTransmute)
+
+### Features
 
 - Use a collection of customizable sublime commands to mutate and contextually modify text
 - Piping using the `|` character is supported and inspired by stdin/stdout mechanics of a unix shell
@@ -17,7 +20,7 @@ Sublime Text 3
 
 Clone this repository into your Sublime Text `Packages` folder
 
-#### Usage
+### Usage
 
 Default Key Bindings:
 
