@@ -18,7 +18,12 @@ Sublime Text 3
 
 #### Installation
 
-Clone this repository into your Sublime Text `Packages` folder
+Clone this repository into your Sublime Text `Packages` folder under the directory name `TextTransmute`
+
+```
+cd Sublime\ Text\ 3/Packages
+git clone https://github.com/nafeu/TextTransmute.git TextTransmute
+```
 
 ### Usage
 
