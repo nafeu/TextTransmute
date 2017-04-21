@@ -279,12 +279,7 @@ class Strip(Transmutation):
 
     def transmute(self, body=None, params=None):
 
-        # Mutation Case Algorithms
-        def default():
-            output = ''
-            for line in body.split("\n"):
-                output += (line.replace(pattern, "") + "\n")
-            return output
+        pattern = ''
 
         try:
             opts, args = getopt.getopt(params, '')
@@ -299,6 +294,16 @@ class Strip(Transmutation):
         if args:
             pattern = args[0]
 
+        # Mutation Case Algorithms
+        def default():
+            output = ''
+            for line in body.split("\n"):
+                output += (line.replace(pattern, "") + "\n")
+            if len(output) > 2:
+                output = output[:-1]
+            return output
+
+
         # default
         return default()
 
@@ -311,7 +316,7 @@ class TestStrip(unittest.TestCase):
         self.t = Strip()
 
     def test_default(self):
-        self.assertEqual(self.t.transmute("a"), "a\na\n")
+        self.assertEqual(self.t.transmute("abc", ["b"]), "ac")
 
 
 # Helpers
