@@ -299,9 +299,7 @@ class Strip(Transmutation):
             output = ''
             for line in body.split("\n"):
                 output += (line.replace(pattern, "") + "\n")
-            if len(output) > 2:
-                output = output[:-1]
-            return output
+            return output.rstrip("\n")
 
 
         # default
@@ -317,6 +315,49 @@ class TestStrip(unittest.TestCase):
 
     def test_default(self):
         self.assertEqual(self.t.transmute("abc", ["b"]), "ac")
+
+
+class Expand(Transmutation):
+    """Expand newline whitespace between lines"""
+
+    def transmute(self, body=None, params=None):
+
+        multiplier = 1
+
+        try:
+            opts, args = getopt.getopt(params, '')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.display_err("%s: %s for %s" % ("Transmutation Error:",
+                                                str(err),
+                                                self.command))
+            return body
+
+        # Arg Handling
+        if args:
+            multiplier = int(args[0])
+
+        # Mutation Case Algorithms
+        def default():
+            output = ''
+            for i in body.split("\n"):
+                output += (i+"\n" + (multiplier * "\n"))
+            return output.rstrip("\n")
+
+        # default
+        return default()
+
+
+class TestExpand(unittest.TestCase):
+    """Unit test for Expand command"""
+
+    # TODO: Improve tests...
+    def setUp(self):
+        self.t = Expand()
+
+    def test_default(self):
+        self.assertEqual(self.t.transmute("a\na"), "a\n\na")
+        self.assertEqual(self.t.transmute("a\na", ["2"]), "a\n\n\na")
 
 
 # Helpers
