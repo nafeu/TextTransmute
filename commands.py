@@ -360,6 +360,33 @@ class TestExpand(unittest.TestCase):
         self.assertEqual(self.t.transmute("a\na", ["2"]), "a\n\n\na")
 
 
+class Compress(Transmutation):
+    """Remove whitespace lines between lines"""
+
+    def transmute(self, body=None, params=None):
+
+        # Mutation Case Algorithms
+        def default():
+            output = ''
+            for line in body.split("\n"):
+                output += (line.rstrip()+" ")
+            return output.rstrip()
+
+        # default
+        return default()
+
+
+class TestCompress(unittest.TestCase):
+    """Unit test for Compress command"""
+
+    # TODO: Improve tests...
+    def setUp(self):
+        self.t = Compress()
+
+    def test_default(self):
+        self.assertEqual(self.t.transmute("a\na"), "a a")
+
+
 # Helpers
 
 OPERATORS = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
