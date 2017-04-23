@@ -139,8 +139,8 @@ class TestSwap(unittest.TestCase):
         self.assertEqual(self.t.transmute("a", ["a", "x"]), "x")
         self.assertEqual(self.t.transmute("abc", ["b", "d"]), "adc")
 
-class Gen(Transmutation):
-    """Generate incrementing lists"""
+class Mklist(Transmutation):
+    """Generate alphabetized or numeric lists"""
 
     def transmute(self, body=None, params=None):
 
@@ -169,7 +169,9 @@ class Gen(Transmutation):
 
         # Option Parsing
         try:
-            opts, args = getopt.getopt(self.params, 'cs:')
+            opts, args = getopt.getopt(self.params,
+                                       'cp:',
+                                       ["close", "place="])
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
             self.display_err("%s: %s for %s" % ("Transmutation Error:",
@@ -179,9 +181,9 @@ class Gen(Transmutation):
 
         # Option Handling
         for o, a in opts:
-            if o == "-c":
+            if o in ("-c", "--close"):
                 seperator = ''
-            elif o == "-s":
+            elif o in ("-p", "--place"):
                 placement = a
                 if placement.find('{$}') == -1:
                     placement = a + '{$}'
@@ -211,18 +213,18 @@ class Gen(Transmutation):
         return default()
 
 
-class TestGen(unittest.TestCase):
-    """Unit test for Swap command"""
+class TestMklist(unittest.TestCase):
+    """Unit test for Mklist command"""
 
     # TODO: Improve tests...
     def setUp(self):
-        self.t = Gen()
+        self.t = Mklist()
 
     def test_default(self):
         self.assertEqual(self.t.transmute("", ["1", "5"]), "1\n2\n3\n4\n5")
         self.assertEqual(self.t.transmute("", ["a", "d"]), "a\nb\nc\nd")
         self.assertEqual(self.t.transmute("", ["-c", "1", "5"]), "12345")
-        self.assertEqual(self.t.transmute("", ["-s", "{$}.", "1", "3"]),
+        self.assertEqual(self.t.transmute("", ["-p", "{$}.", "1", "3"]),
                                           "1.\n2.\n3.")
 
 
@@ -241,7 +243,9 @@ class Dupl(Transmutation):
 
         # Option Parsing
         try:
-            opts, args = getopt.getopt(params, 's')
+            opts, args = getopt.getopt(params,
+                                       'c',
+                                       ["close"])
         except getopt.GetoptError as err:
             # will print something like "option -a not recognized"
             self.display_err("%s: %s for %s" % ("Transmutation Error:",
@@ -251,7 +255,7 @@ class Dupl(Transmutation):
 
         # Option Handling
         for o, a in opts:
-            if o == "-s":
+            if o in ("-c", "--close"):
                 newline = ''
 
         # Arg Handling
@@ -271,7 +275,7 @@ class TestDupl(unittest.TestCase):
 
     def test_default(self):
         self.assertEqual(self.t.transmute("a"), "a\na\n")
-        self.assertEqual(self.t.transmute("a", ["-s"]), "aa")
+        self.assertEqual(self.t.transmute("a", ["-c"]), "aa")
 
 
 class Strip(Transmutation):
