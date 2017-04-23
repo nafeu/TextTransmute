@@ -1,7 +1,6 @@
+# TextTransmute
 
-# Text Transmute
-
-An experimental [Sublime Text](https://www.sublimetext.com/) plugin that allows you to mutate selected text in a style inspired by VIM, Emacs and unix shell programming tools.
+An experimental [Sublime Text](https://www.sublimetext.com/) plugin that allows you to mutate selected text in a style inspired by VIM, Emacs macros and unix shell programming tools.
 
 [![Build Status](https://travis-ci.org/nafeu/TextTransmute.svg?branch=master)](https://travis-ci.org/nafeu/TextTransmute)
 
@@ -45,7 +44,21 @@ Edit Key Bindings
 Edit/Add Custom Commands
 ```
 
-### Creating Custom Commands
+### Currently Available Transmutation Commands (more to come)
+
+_`[]` - Mandatory, `()` - Optional_
+
+| Name / Synopsis | Description |
+| --------------- | ----------- |
+| `expr` | Evaluate simple expressions |
+| `swap [OLD STRING] [NEW STRING]`  | Swap matched strings with a new string |
+| `mklist [NUM/LETTER] [NUM/LETTER] (--close) (--place=[STRING INCLUDING {$}])` | Generate alphabetized or numeric lists |
+| `dupl (n) (--close)` | Duplicate selection n times |
+| `strip [STRING]` | Strip a matched string out of a selection |
+| `expand (n)` | Add an empty whitespace between lines n times |
+| `compress` | Compress multiple lines into one line |
+
+### Creating Custom Transmutation Commands
 
 Lets say we want to make a command called `Foo`
 
@@ -62,7 +75,7 @@ class Foo(Transmutation):
 2. `Foo` or `foo` is how your command will be invoked, it must
     be **ONE WORD** for the plugin to add it to the command library
 
-3. Add the 'transmute' method to your class like so:
+3. Add the `transmute(self, body=None, params=None)` method to your class like so:
 
 ```python
 class Foo(Transmutation):
@@ -75,7 +88,7 @@ class Foo(Transmutation):
 The `transmute` method will be called on the `body` of text
 you have selected. To learn about the `params` argument,
 observe the base `Transmutation` class found inside
-`Packages/TextTransmute/commands.py`
+[`Packages/TextTransmute/commands.py`](https://github.com/nafeu/TextTransmute/blob/master/commands.py)
 
 4. Return a string in your transmute method, this is what you'll be
    mutating your selected text into
@@ -85,11 +98,10 @@ class Foo(Transmutation):
     """Convert selected text to 'bar'"""
 
     def transmute(self, body=None, params=None):
-        """Convert selected text to 'bar'"""
         return "bar"
 ```
 
-5. Define a test for your command
+5. Define a test for your command (definitely a more comprehensive one than the following example)
 
 ```python
 class TestFoo(unittest.TestCase):
@@ -102,6 +114,8 @@ class TestFoo(unittest.TestCase):
         self.assertEqual(self.t.transmute(), "bar")
         self.assertEqual(self.t.transmute("Foo"), "bar")
 ```
+
+6. Run tests using `python runtests.py`
 
 ### Editing Aliases
 
