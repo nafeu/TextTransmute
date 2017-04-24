@@ -3,6 +3,7 @@ import unittest
 import ast
 import operator as op
 import textwrap
+import re
 
 class Transmutation(object):
     """Transmutation example and help"""
@@ -436,6 +437,76 @@ class TestFilter(unittest.TestCase):
     def test_default(self):
         self.assertEqual(self.t.transmute("abc\ndef\nc\n", ["de"]), "def")
 
+
+class Map(Transmutation):
+    """Generate a language specific map"""
+
+    def transmute(self, body=None, params=None):
+
+        ws_pattern = re.compile(r'''((?:[^\s"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(params, '')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.display_err("%s: %s for %s" % ("Transmutation Error:",
+                                                str(err),
+                                                self.command))
+            return body
+
+        # # Arg Handling
+        # if len(args) > 0:
+        #     lang = args[0]
+        # else:
+        #     self.display_err("'%s' %s: %s" % (self.command,
+        #                                       "requires arguments",
+        #                                       "[language]"))
+
+        # Mutation Case Algorithms
+
+        def strip_quotes(input_string):
+            if ((input_string[0] == input_string[len(input_string)-1])
+                and (input_string[0] in ('"', "'"))):
+                return input_string[1:-1]
+            return str(input_string)
+
+        def default():
+            # split_body = ws_pattern.split(body)
+            split_body = [x for x in ws_pattern.split(body)[1::2]]
+            indent = "  "
+
+            output = split_body[0] + " = {\n";
+            for i in range(1,len(split_body)):
+                if (i % 2 != 0):
+                    output += indent + "\"" + split_body[i].replace("\"", "\\\"") + "\": "
+                else:
+                    output += split_body[i] + "\n"
+            if (len(split_body) % 2 == 0):
+                output += "\"\"\n"
+            output += "}"
+            return output
+
+        # default
+        return default()
+
+
+class TestMap(unittest.TestCase):
+    """Unit test for Map class"""
+
+    # TODO: Improve tests...
+    def setUp(self):
+        self.t = Map()
+
+    def test_js(self):
+        self.assertEqual(self.t.transmute("a b \"c\""),
+                         "a = {\n  \"b\": \"c\"\n}")
+        self.assertEqual(self.t.transmute("a b 1"),
+                         "a = {\n  \"b\": 1\n}")
+        self.assertEqual(self.t.transmute("a b 1"),
+                         "a = {\n  \"b\": 1\n}")
+        self.assertEqual(self.t.transmute("a b"),
+                         "a = {\n  \"b\": \"\"\n}")
 
 
 # Helpers
