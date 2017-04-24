@@ -51,12 +51,13 @@ _`[]` - Mandatory, `()` - Optional_
 | Name / Synopsis | Description |
 | --------------- | ----------- |
 | `expr` | Evaluate simple expressions |
-| `swap [OLD STRING] [NEW STRING]`  | Swap matched strings with a new string |
-| `mklist [NUM/LETTER] [NUM/LETTER] (--close) (--place=[STRING INCLUDING {$}])` | Generate alphabetized or numeric lists |
+| `swap [old string] [new string]`  | Swap matched strings with a new string |
+| `mklist [num/letter] [num/letter] (--close) (--place=[string containing {$}])` | Generate alphabetized or numeric lists |
 | `dupl (n) (--close)` | Duplicate selection n times |
-| `strip [STRING]` | Strip a matched string out of a selection |
+| `strip [string]` | Strip a matched string out of a selection |
 | `expand (n)` | Add an empty whitespace between lines n times |
 | `compress` | Compress multiple lines into one line |
+| `filter [string]` | Filter for lines that contain a specific string |
 
 ### Creating Custom Transmutation Commands
 

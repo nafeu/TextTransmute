@@ -391,6 +391,53 @@ class TestCompress(unittest.TestCase):
         self.assertEqual(self.t.transmute("a\na"), "a a")
 
 
+class Filter(Transmutation):
+    """Filter for lines that contain a specific string"""
+
+    def transmute(self, body=None, params=None):
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(params, '')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.display_err("%s: %s for %s" % ("Transmutation Error:",
+                                                str(err),
+                                                self.command))
+            return body
+
+        # Arg Handling
+        if len(args) > 0:
+            pattern = args[0]
+        else:
+            self.display_err("'%s' %s: %s" % (self.command,
+                                              "requires arguments",
+                                              "[pattern]"))
+
+        # Mutation Case Algorithms
+        def default():
+            output = ''
+            for line in body.split("\n"):
+                if pattern in line:
+                    output += (line + "\n")
+            return output.rstrip("\n")
+
+        # default
+        return default()
+
+
+class TestFilter(unittest.TestCase):
+    """Unit test for Filter command"""
+
+    # TODO: Improve tests...
+    def setUp(self):
+        self.t = Filter()
+
+    def test_default(self):
+        self.assertEqual(self.t.transmute("abc\ndef\nc\n", ["de"]), "def")
+
+
+
 # Helpers
 
 OPERATORS = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
