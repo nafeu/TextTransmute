@@ -14,16 +14,18 @@ An experimental [Sublime Text](https://www.sublimetext.com/) plugin that allows 
 
 ### Features
 
-- Use a collection of customizable sublime commands to mutate and contextually modify text
+- Use a collection of customizable sublime commands to mutate and contextually modify text. Some notable things include:
+    - Performing HTTP GET/POST requests right inside your text editor
+    - Quick multi line formatting with `swap`, `dupl`, `expand`, `compress`, `filter`
 - Piping using the `|` character is supported and inspired by stdin/stdout mechanics of a unix shell
 - Use knowledge of python to quickly write a command that helps simplify repetitive coding tasks
 - Create aliases that run a common/useful sequence of piped commands
 
-#### Requirements
+### Requirements
 
 Sublime Text 3
 
-#### Installation
+### Installation
 
 Clone this repository into your Sublime Text `Packages` folder under the directory name `TextTransmute`
 
@@ -154,7 +156,7 @@ Otherwise use:
 
 ```python3 runtests.py```
 
-#### Development
+### Development
 
 OSX/Linux:
 
