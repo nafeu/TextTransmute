@@ -5,6 +5,8 @@ import operator as op
 import textwrap
 import re
 import requests
+import markdown
+from bs4 import BeautifulSoup
 
 class Transmutation(object):
     """Transmutation example and help"""
@@ -598,6 +600,54 @@ class Http(Transmutation):
                                               method))
             return body
 
+
+class Markdown(Transmutation):
+    """Parse markdown into html"""
+
+    def transmute(self, body=None, params=None, meta=None):
+
+        r = re.compile(r'^(\s*)', re.MULTILINE)
+        indentation = r'\1\1'
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(params, '')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.display_err("%s: %s for %s" % ("Transmutation Error:",
+                                                str(err),
+                                                self.command))
+            return body
+
+        # Arg Handling
+        if args:
+            indent_amt = args[0]
+            if indent_amt.isdigit():
+                indentation = r'\1' * int(indent_amt)
+            else:
+                self.display_err("'%s' %s: %s" % (self.command,
+                                                  "indent must be number",
+                                                  "[indentation]"))
+
+        def default():
+            soup = BeautifulSoup(markdown.markdown(body), 'html.parser')
+            output = r.sub(indentation, soup.prettify())
+            return output
+
+        return default()
+
+class TestMarkdown(unittest.TestCase):
+    """Unit test for Markdown class"""
+
+    # TODO: Improve tests...
+    def setUp(self):
+        self.t = Markdown()
+
+    def test_default(self):
+        self.assertEqual(self.t.transmute("# Hello World"),
+                         "<h1>\n  Hello World\n</h1>")
+        self.assertEqual(self.t.transmute("# Hello World", ["4"]),
+                         "<h1>\n    Hello World\n</h1>")
 
 
 # Helpers

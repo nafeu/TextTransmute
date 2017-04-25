@@ -1,7 +1,9 @@
 {
    "*": {
       "*": [
-         "requests"
+         "requests",
+         "python-markdown",
+         "bs4"
       ]
    }
 }

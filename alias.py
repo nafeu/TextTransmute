@@ -9,6 +9,7 @@ ALIASES = [
   ["Convert sequence to Javascript object", "map js"],
   ["Generate a list from 1 to 10", "mklist -s {$}. 1 10"],
   ["Generate a list from a to e", "mklist -s {$}. a e"],
+  ["Parse markdown into html", "markdown"],
   # ["Description", "Command sequence"],
 
 ]

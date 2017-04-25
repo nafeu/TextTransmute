@@ -60,7 +60,7 @@ _`[]` - Mandatory, `()` - Optional_
 
 | Name / Synopsis | Description |
 | --------------- | ----------- |
-| `http [method] (url) (key) (val) ...` | Perform HTTP GET/POST request using [Requests](http://docs.python-requests.org/en/master/) library |
+| `http [method] (url) (key_1) (val_1) ... (key_n) (val_n)` | Perform http requests |
 | `swap [old string] [new string]`  | Swap matched strings with a new string |
 | `expr` | Evaluate simple expressions |
 | `mklist [#/a-z] [#/a-z] (--close) (--place=[string including {$}])` | Generate alphabetized or numeric lists |
@@ -70,6 +70,7 @@ _`[]` - Mandatory, `()` - Optional_
 | `compress` | Compress multiple lines into one line |
 | `filter [string]` | Filter for lines that contain a specific string |
 | `map (file extension)` | Convert whitespace seperated words into language specific map (hashmap, dict, json, etc) |
+| `markdown (indentation amount)` | Parse markdown into html |
 
 ### Creating Custom Transmutation Commands
 
