@@ -4,6 +4,14 @@ An experimental [Sublime Text](https://www.sublimetext.com/) plugin that allows 
 
 [![Build Status](https://travis-ci.org/nafeu/TextTransmute.svg?branch=master)](https://travis-ci.org/nafeu/TextTransmute)
 
+### How It Works
+
+1. Select some text
+2. Select the transmutation(s) you want to perform
+3. Watch the text magically change
+4. Realize some transmutations don't even need inputs at all
+5. Channel your inner alchemist
+
 ### Features
 
 - Use a collection of customizable sublime commands to mutate and contextually modify text
@@ -50,14 +58,16 @@ _`[]` - Mandatory, `()` - Optional_
 
 | Name / Synopsis | Description |
 | --------------- | ----------- |
-| `expr` | Evaluate simple expressions |
+| `http [method] (url) (key) (val) ...` | Perform HTTP GET/POST request using [Requests](http://docs.python-requests.org/en/master/) library |
 | `swap [old string] [new string]`  | Swap matched strings with a new string |
-| `mklist [num/letter] [num/letter] (--close) (--place=[string containing {$}])` | Generate alphabetized or numeric lists |
+| `expr` | Evaluate simple expressions |
+| `mklist [#/a-z] [#/a-z] (--close) (--place=[string including {$}])` | Generate alphabetized or numeric lists |
 | `dupl (n) (--close)` | Duplicate selection n times |
 | `strip [string]` | Strip a matched string out of a selection |
 | `expand (n)` | Add an empty whitespace between lines n times |
 | `compress` | Compress multiple lines into one line |
 | `filter [string]` | Filter for lines that contain a specific string |
+| `map (file extension)` | Convert whitespace seperated words into language specific map (hashmap, dict, json, etc) |
 
 ### Creating Custom Transmutation Commands
 
