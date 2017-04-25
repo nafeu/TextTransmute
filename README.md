@@ -136,9 +136,24 @@ ALIASES = [
 
 ### Running the tests
 
+If system is running `Python 3` use:
+
+```python runtests.py```
+
+Otherwise use:
+
+```python3 runtests.py```
+
+#### Development
+
+OSX/Linux:
+
 ```
-python runtests.py
+cd Sublime\ Text\ 3/Packages\TextTransmute
+pip3 install -r requirements.txt
 ```
+
+TODO: Add Windows dev instructions...
 
 ### License
 

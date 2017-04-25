@@ -4,6 +4,7 @@ import ast
 import operator as op
 import textwrap
 import re
+import requests
 
 class Transmutation(object):
     """Transmutation example and help"""
@@ -527,6 +528,76 @@ class TestMap(unittest.TestCase):
     def test_js(self):
         self.assertEqual(self.t.transmute("a b \"c\"", ["js"]),
                          "var a = {\n  \"b\": \"c\"\n}")
+
+
+class Http(Transmutation):
+    """Execute an http request with requests library"""
+
+    def transmute(self, body=None, params=None, meta=None):
+
+        self.body = body
+        ws_pattern = re.compile(r'''((?:[^\s"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
+        payload = {}
+
+        # Helpers
+        def strip_quotes(input_string):
+            if ((input_string[0] == input_string[len(input_string)-1])
+                and (input_string[0] in ('"', "'"))):
+                return input_string[1:-1]
+            return input_string
+
+        # Option Parsing
+        try:
+            opts, args = getopt.getopt(params, '')
+        except getopt.GetoptError as err:
+            # will print something like "option -a not recognized"
+            self.display_err("%s: %s for %s" % ("Transmutation Error:",
+                                                str(err),
+                                                self.command))
+            return body
+
+        # Arg Handling
+        if len(args) > 0:
+            method = args[0]
+        else:
+            self.display_err("'%s' %s: %s" % (self.command,
+                                              "requires http verb",
+                                              "[method]"))
+
+        if len(args) > 2:
+            url = args[1];
+            for i in range(2,len(args)):
+                if (i % 2 == 0) and (i < len(args) - 1):
+                    payload[args[i]] = args[i + 1]
+        else:
+            self.body = self.body.replace("\n", " ")
+            split_body = [strip_quotes(x) for x in ws_pattern.split(self.body)[1::2]]
+            url = split_body[0];
+            for i in range(1,len(split_body)):
+                if (i % 2 != 0) and (i < len(split_body) - 1):
+                    payload[split_body[i]] = split_body[i + 1]
+
+        # Mutation Case Algorithms
+        def get():
+            r = requests.get(url, params=payload)
+            return r.text
+
+        def post():
+            r = requests.post(url, params=payload)
+            return r.text
+
+            return body
+
+        if method.lower() == "get":
+            return get()
+        elif method.lower() == "post":
+            return post()
+        else:
+            self.display_err("'%s' %s: %s" % (self.command,
+                                              "unsupported method",
+                                              method))
+            return body
+
 
 
 # Helpers
