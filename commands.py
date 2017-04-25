@@ -19,7 +19,7 @@ class Transmutation(object):
         else:
             print(message)
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
         self.body = body
 
         # Mutation Case Algorithms
@@ -441,9 +441,33 @@ class TestFilter(unittest.TestCase):
 class Map(Transmutation):
     """Generate a language specific map"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
 
         ws_pattern = re.compile(r'''((?:[^\s"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
+        extension = ""
+
+        # Mutation Case Algorithms
+        def format_py(indent):
+            split_body = [x for x in ws_pattern.split(body)[1::2]]
+            leading_ws = " " * (len(body) - len(body.lstrip(' ')))
+            output = leading_ws + split_body[0] + " = {\n";
+            for i in range(1,len(split_body)):
+                if (i % 2 != 0):
+                    output += (leading_ws +
+                               indent +
+                               "\"" +
+                               split_body[i].replace("\"", "\\\"") +
+                               "\": ")
+                else:
+                    output += split_body[i] + "\n"
+            if (len(split_body) % 2 == 0):
+                output += "\"\"\n"
+            output += leading_ws + "}"
+            return output
+
+        def format_js(indent):
+            return "var " + format_py(indent)
+
 
         # Option Parsing
         try:
@@ -455,40 +479,30 @@ class Map(Transmutation):
                                                 self.command))
             return body
 
-        # # Arg Handling
-        # if len(args) > 0:
-        #     lang = args[0]
-        # else:
-        #     self.display_err("'%s' %s: %s" % (self.command,
-        #                                       "requires arguments",
-        #                                       "[language]"))
+        # Arg Handling
+        if len(args) > 0:
+            extension = args[0]
+        elif "file_extension" in meta:
+            extension = meta["file_extension"]
+        else:
+            self.display_err("'%s' %s: %s" % (self.command,
+                                              "no extension specified",
+                                              "[extension]"))
+            return body
 
-        # Mutation Case Algorithms
-
-        def strip_quotes(input_string):
-            if ((input_string[0] == input_string[len(input_string)-1])
-                and (input_string[0] in ('"', "'"))):
-                return input_string[1:-1]
-            return str(input_string)
-
-        def default():
-            # split_body = ws_pattern.split(body)
-            split_body = [x for x in ws_pattern.split(body)[1::2]]
-            indent = "  "
-
-            output = split_body[0] + " = {\n";
-            for i in range(1,len(split_body)):
-                if (i % 2 != 0):
-                    output += indent + "\"" + split_body[i].replace("\"", "\\\"") + "\": "
-                else:
-                    output += split_body[i] + "\n"
-            if (len(split_body) % 2 == 0):
-                output += "\"\"\n"
-            output += "}"
-            return output
-
-        # default
-        return default()
+        if extension == "py":
+            return format_py("    ")
+        elif extension == "js":
+            return format_js("  ")
+        elif extension == "clj":
+            return format_clj()
+        elif extension == "cljs":
+            return format_clj()
+        else:
+            self.display_err("%s: '%s' %s" % ("extension",
+                                              extension,
+                                              "is not supported"))
+            return body
 
 
 class TestMap(unittest.TestCase):
@@ -498,15 +512,21 @@ class TestMap(unittest.TestCase):
     def setUp(self):
         self.t = Map()
 
+    def test_py(self):
+        self.assertEqual(self.t.transmute("a b \"c\"", ["py"]),
+                         "a = {\n    \"b\": \"c\"\n}")
+        self.assertEqual(self.t.transmute("  a b \"c\"", ["py"]),
+                         "  a = {\n      \"b\": \"c\"\n  }")
+        self.assertEqual(self.t.transmute("a b 1", ["py"]),
+                         "a = {\n    \"b\": 1\n}")
+        self.assertEqual(self.t.transmute("a b 1", ["py"]),
+                         "a = {\n    \"b\": 1\n}")
+        self.assertEqual(self.t.transmute("a b", ["py"]),
+                         "a = {\n    \"b\": \"\"\n}")
+
     def test_js(self):
-        self.assertEqual(self.t.transmute("a b \"c\""),
-                         "a = {\n  \"b\": \"c\"\n}")
-        self.assertEqual(self.t.transmute("a b 1"),
-                         "a = {\n  \"b\": 1\n}")
-        self.assertEqual(self.t.transmute("a b 1"),
-                         "a = {\n  \"b\": 1\n}")
-        self.assertEqual(self.t.transmute("a b"),
-                         "a = {\n  \"b\": \"\"\n}")
+        self.assertEqual(self.t.transmute("a b \"c\"", ["js"]),
+                         "var a = {\n  \"b\": \"c\"\n}")
 
 
 # Helpers

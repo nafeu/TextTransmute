@@ -50,6 +50,7 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
         success = True
         append_to_sel = False
         active_view = sublime.active_window().active_view()
+        meta = sublime.active_window().extract_variables()
         region_set = active_view.sel()
         err_log = WindowErrorLogger()
         ws_pattern = re.compile(r'''((?:[^\s"'`]|"[^"]*"|'[^']*'|`[^`]*`)+)''')
@@ -97,7 +98,7 @@ class TextTransmuteParseCommand(sublime_plugin.TextCommand):
                 if command_name.capitalize() in globals():
                     try:
                         t = globals()[command_name.capitalize()](err_log)
-                        body = str(t.transmute(body, params))
+                        body = str(t.transmute(body=body, params=params, meta=meta))
                     except Exception as e:
                         success = False
                         err_log.display_err("Transmute Error: '%s'" % (str(e)))
