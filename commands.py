@@ -573,7 +573,8 @@ class Http(Transmutation):
                     payload[args[i]] = args[i + 1]
         else:
             self.body = self.body.replace("\n", " ")
-            split_body = [strip_quotes(x) for x in ws_pattern.split(self.body)[1::2]]
+            split_body = [strip_quotes(x)
+                          for x in ws_pattern.split(self.body)[1::2]]
             url = split_body[0];
             for i in range(1,len(split_body)):
                 if (i % 2 != 0) and (i < len(split_body) - 1):
@@ -588,12 +589,36 @@ class Http(Transmutation):
             r = requests.post(url, params=payload)
             return r.text
 
+        def put():
+            r = requests.put(url, params=payload)
+            return r.text
+
+        def delete():
+            r = requests.delete(url, params=payload)
+            return r.text
+
+        def head():
+            r = requests.head(url, params=payload)
+            return r.text
+
+        def options():
+            r = requests.options(url, params=payload)
+            return r.text
+
             return body
 
         if method.lower() == "get":
             return get()
         elif method.lower() == "post":
             return post()
+        elif method.lower() == "put":
+            return put()
+        elif method.lower() == "delete":
+            return delete()
+        elif method.lower() == "head":
+            return head()
+        elif method.lower() == "options":
+            return options()
         else:
             self.display_err("'%s' %s: %s" % (self.command,
                                               "unsupported method",
