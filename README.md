@@ -82,7 +82,7 @@ class Foo(Transmutation):
 class Foo(Transmutation):
     """Convert selected text to 'bar'"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
         ...
 ```
 
@@ -98,7 +98,7 @@ observe the base `Transmutation` class found inside
 class Foo(Transmutation):
     """Convert selected text to 'bar'"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
         return "bar"
 ```
 

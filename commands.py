@@ -77,7 +77,7 @@ class TestTransmutation(unittest.TestCase):
 class Expr(Transmutation):
     """Evaluate simple expressions"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
         try:
             return eval_expr(body)
         except Exception:
@@ -101,7 +101,7 @@ class TestExpr(unittest.TestCase):
 class Swap(Transmutation):
     """Replace matched substrings inside a selection"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
 
         # Mutation Case Algorithms
         def default():
@@ -143,7 +143,7 @@ class TestSwap(unittest.TestCase):
 class Mklist(Transmutation):
     """Generate alphabetized or numeric lists"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
 
         self.body = body
         self.params = params
@@ -232,7 +232,7 @@ class TestMklist(unittest.TestCase):
 class Dupl(Transmutation):
     """Duplicate selection n times"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
 
         # Option status
         newline = '\n'
@@ -282,7 +282,7 @@ class TestDupl(unittest.TestCase):
 class Strip(Transmutation):
     """Strip a matched pattern out of selection"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
 
         pattern = ''
 
@@ -325,7 +325,7 @@ class TestStrip(unittest.TestCase):
 class Expand(Transmutation):
     """Expand newline whitespace between lines"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
 
         multiplier = 1
 
@@ -368,7 +368,7 @@ class TestExpand(unittest.TestCase):
 class Compress(Transmutation):
     """Remove whitespace lines between lines"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
 
         # Mutation Case Algorithms
         def default():
@@ -395,7 +395,7 @@ class TestCompress(unittest.TestCase):
 class Filter(Transmutation):
     """Filter for lines that contain a specific string"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
 
         # Option Parsing
         try:

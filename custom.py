@@ -41,7 +41,7 @@ except (ValueError, SystemError):
 
     class Foo(Transmutation):
 
-        def transmute(self, body=None, params=None):
+        def transmute(self, body=None, params=None, meta=None):
             ...
 
     The 'transmute' method will be called on the 'body' of text
@@ -57,7 +57,7 @@ except (ValueError, SystemError):
 class Foo(Transmutation):
     """Convert selected text to 'bar'"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
         return "bar"
 
 
@@ -82,7 +82,7 @@ class TestFoo(unittest.TestCase):
 class Rev(Transmutation):
     """Reverse selected text"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
         return body[::-1]
 
 
@@ -101,7 +101,7 @@ class TestRev(unittest.TestCase):
 class Leet(Transmutation):
     """Convert selected text into l33t 5p34k"""
 
-    def transmute(self, body=None, params=None):
+    def transmute(self, body=None, params=None, meta=None):
         return (body.lower()
                 .replace("e", "3")
                 .replace("l", "1")
