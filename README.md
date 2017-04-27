@@ -15,9 +15,9 @@ An experimental [Sublime Text](https://www.sublimetext.com/) plugin that allows 
 ### Features
 
 - Use a collection of customizable sublime commands to mutate and contextually modify text. Some notable things include:
-    - Performing HTTP GET/POST requests right inside your text editor
-    - Converting markdown in selected text directly to html
-    - Quick multi line formatting with `swap`, `dupl`, `expand`, `compress`, `filter`
+    - Performing HTTP GET/POST requests right inside your text editor (useful for testing REST APIs)
+    - Converting selected text from `markdown` to `html`
+    - Quick multi line formatting with `swap`, `dupl`, `expand`, `compress`, `filter`, and `strip`
 - Piping using the `|` character is supported and inspired by stdin/stdout mechanics of a unix shell
 - Use knowledge of python to quickly write a command that helps simplify repetitive coding tasks
 - Create aliases that run a common/useful sequence of piped commands
@@ -160,7 +160,7 @@ Otherwise use:
 
 ```python3 runtests.py```
 
-#### Autorun tests on file watch:
+#### Autorun tests on file change:
 
 Use the included `gulpfile` to autorun tests anytime a `.py` file is changed:
 
