@@ -655,11 +655,15 @@ class Markdown(Transmutation):
                                                   "[indentation]"))
 
         def default():
-            soup = BeautifulSoup(markdown.markdown(body), 'html.parser')
+            md = markdown.markdown(body,
+                                   extensions=['markdown.extensions.extra'],
+                                   output_format="xhtml5")
+            soup = BeautifulSoup(md, 'html.parser')
             output = r.sub(indentation, soup.prettify())
             return output
 
         return default()
+
 
 class TestMarkdown(unittest.TestCase):
     """Unit test for Markdown class"""
@@ -671,9 +675,8 @@ class TestMarkdown(unittest.TestCase):
     def test_default(self):
         self.assertEqual(self.t.transmute("# Hello World"),
                          "<h1>\n  Hello World\n</h1>")
-        self.assertEqual(self.t.transmute("# Hello World", ["4"]),
-                         "<h1>\n    Hello World\n</h1>")
-
+        self.assertEqual(self.t.transmute("- a"),
+                         "<ul>\n  <li>\n    a\n  </li>\n</ul>")
 
 # Helpers
 

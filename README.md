@@ -16,6 +16,7 @@ An experimental [Sublime Text](https://www.sublimetext.com/) plugin that allows 
 
 - Use a collection of customizable sublime commands to mutate and contextually modify text. Some notable things include:
     - Performing HTTP GET/POST requests right inside your text editor
+    - Converting markdown in selected text directly to html
     - Quick multi line formatting with `swap`, `dupl`, `expand`, `compress`, `filter`
 - Piping using the `|` character is supported and inspired by stdin/stdout mechanics of a unix shell
 - Use knowledge of python to quickly write a command that helps simplify repetitive coding tasks
@@ -61,6 +62,7 @@ _`[]` - Mandatory, `()` - Optional_
 | Name / Synopsis | Description |
 | --------------- | ----------- |
 | `http [method] (url) (key_1) (val_1) ... (key_n) (val_n)` | Perform http requests |
+| `markdown (indentation amount)` | Parse markdown into html |
 | `swap [old string] [new string]`  | Swap matched strings with a new string |
 | `expr` | Evaluate simple expressions |
 | `mklist [#/a-z] [#/a-z] (--close) (--place=[string including {$}])` | Generate alphabetized or numeric lists |
@@ -70,7 +72,6 @@ _`[]` - Mandatory, `()` - Optional_
 | `compress` | Compress multiple lines into one line |
 | `filter [string]` | Filter for lines that contain a specific string |
 | `map (file extension)` | Convert whitespace seperated words into language specific map (hashmap, dict, json, etc) |
-| `markdown (indentation amount)` | Parse markdown into html |
 
 ### Creating Custom Transmutation Commands
 
