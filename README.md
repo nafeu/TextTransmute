@@ -23,7 +23,7 @@ An experimental [Sublime Text](https://www.sublimetext.com/) plugin that allows 
 
 ### Requirements
 
-Sublime Text 3
+Sublime Text 3, Python 3.3 and above
 
 ### Installation
 
@@ -149,6 +149,8 @@ ALIASES = [
 
 ### Running the tests
 
+#### Manually:
+
 If system is running `Python 3` use:
 
 ```python runtests.py```
@@ -156,6 +158,17 @@ If system is running `Python 3` use:
 Otherwise use:
 
 ```python3 runtests.py```
+
+#### Autorun tests on file watch:
+
+Use the included `gulpfile` to autorun tests anytime a `.py` file is changed:
+
+```
+npm install
+gulp test-py
+```
+
+Use `gulp test-py3` to enforce `Python 3`
 
 ### Development
 
