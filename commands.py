@@ -4,6 +4,7 @@ import ast
 import operator as op
 import textwrap
 import re
+import string
 import requests
 import markdown
 from bs4 import BeautifulSoup
@@ -659,7 +660,11 @@ class Markdown(Transmutation):
                                    extensions=['markdown.extensions.extra'],
                                    output_format="xhtml5")
             soup = BeautifulSoup(md, 'html.parser')
+            punctuation = re.sub('[<>]','',string.punctuation)
             output = r.sub(indentation, soup.prettify())
+            output = re.sub('(<\w+>)\n\s*([\w\s\n'+punctuation+']*)\n\s*(</\w+>)',
+                            '\\1\\2\\3',
+                            output)
             return output
 
         return default()
@@ -674,9 +679,9 @@ class TestMarkdown(unittest.TestCase):
 
     def test_default(self):
         self.assertEqual(self.t.transmute("# Hello World"),
-                         "<h1>\n  Hello World\n</h1>")
-        self.assertEqual(self.t.transmute("- a"),
-                         "<ul>\n  <li>\n    a\n  </li>\n</ul>")
+                         "<h1>Hello World</h1>")
+        self.assertEqual(self.t.transmute("- a b c"),
+                         "<ul>\n  <li>a b c</li>\n</ul>")
 
 # Helpers
 
